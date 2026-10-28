@@ -34,3 +34,12 @@
 .guide-popover li p{font-size:10px;line-height:1.6;color:#9aabc1;margin:4px 0 0}
 .guide-note{border-top:1px solid #25364b;padding-top:12px;margin:0;color:#8498b2;font-size:9px;line-height:1.6}
 @media(max-width:700px){.top-actions{gap:7px}.guide-trigger{padding:8px;font-size:9px}.guide-popover{right:-4px;top:calc(100% + 8px)}}
+
+
+/* Fichas anatómicas: ubicación y relaciones entre estructuras. */
+.location-row{display:block;line-height:1.55}
+.location-row>span,.relations-title{display:block;color:#8090a7;font-size:9px;margin-bottom:6px}
+.location-row p{margin:0;color:#c4d0df;font-size:10px;line-height:1.65}
+.relations-block{margin:14px 0 12px}
+.relation-chips{display:flex;flex-wrap:wrap;gap:5px}
+.relation-chips span{display:inline-flex;border:1px solid #293c55;border-radius:6px;background:#111f32;color:#afc2dd;padding:5px 7px;font-size:9px;line-height:1.3}
