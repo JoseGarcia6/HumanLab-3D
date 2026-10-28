@@ -130,3 +130,28 @@
 .question-actions>span{font-size:9px;color:#8095b0}
 @media(max-width:900px){.dictionary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dictionary-filters{grid-template-columns:1fr}.category-filters{justify-content:flex-start}}
 @media(max-width:600px){.library-card{padding:14px}.library-heading{display:block}.library-heading h2{font-size:18px}.library-stats{display:flex;align-items:center;gap:6px;margin-top:13px;width:max-content}.library-stats strong{font-size:15px;margin-left:5px}.library-stats span{font-size:8px}.library-tabs{gap:5px}.library-tabs button{flex:1;padding:9px 6px;font-size:9px}.dictionary-grid{grid-template-columns:1fr}.dictionary-filters{gap:9px}.category-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.category-filters button{padding:8px 4px;font-size:9px}.practice-toolbar{display:grid;grid-template-columns:1fr}.practice-toolbar select{width:100%}.practice-score{justify-content:space-between}.question-box{padding:14px}.question-box h3{font-size:14px}.question-options{grid-template-columns:1fr}.question-options button{min-height:40px}.question-actions{align-items:flex-start;flex-direction:column}}
+
+
+/* Controles educativos de capas, simulación y progreso local. */
+.layer-controls{display:grid;gap:10px;padding:13px 16px;border-top:1px solid #25364b;background:#0d1828}
+.layer-controls-heading{display:flex;flex-direction:column;gap:4px}
+.layer-controls-heading strong{font:700 11px Manrope,sans-serif;color:#e5edff}
+.layer-controls-heading span{font-size:9px;line-height:1.5;color:#8397b2}
+.layer-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.layer-buttons button,.layer-reset{border:1px solid #2c405b;border-radius:7px;background:#101d2e;color:#aabbd1;padding:7px 9px;font-size:9px}
+.layer-buttons button.layer-active{border-color:#536fa9;background:#1a2e4b;color:#dbe7ff}
+.layer-buttons button:focus-visible,.layer-reset:focus-visible,.lab-tabs button:focus-visible,.practice-extra-actions button:focus-visible{outline:2px solid #9ab8ff;outline-offset:2px}
+.layer-reset{justify-self:start;background:#14243a;color:#c3d5f4}
+.lab-tabs{display:flex;gap:7px;margin:10px 0}
+.lab-tabs button{flex:1;border:1px solid #2b405b;border-radius:7px;background:#101d2e;color:#aabbd1;padding:8px;font-size:9px}
+.lab-tabs button.active{border-color:#6687c5;background:#1a2e4d;color:#e4edff}
+.lab-explanation{border:1px solid #293c55;border-radius:8px;background:#0d1929;color:#a8bad1;padding:10px;font-size:10px;line-height:1.65;margin:0 0 13px}
+.entry-references{display:grid;gap:6px;border-top:1px solid #22334a;padding-top:10px;margin-top:11px;width:100%}
+.entry-references strong{font-size:9px;color:#8097b6}
+.entry-references a{font-size:9px;line-height:1.5;color:#a9c4ff;text-decoration:none}
+.entry-references a:hover{text-decoration:underline;color:#d5e3ff}
+.practice-extra-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.practice-extra-actions button{border:1px solid #2b405b;border-radius:8px;background:#101d2e;color:#aabbd1;padding:9px 11px;font-size:9px}
+.practice-extra-actions button.active{border-color:#6c8bd0;background:#1a2e4d;color:#e5edff}
+.review-empty{margin:12px 0;padding:12px;border:1px solid #2d594c;border-radius:8px;background:#102a24;color:#a7e8d2;font-size:10px;line-height:1.6}
+@media(max-width:600px){.layer-controls{padding:12px}.layer-buttons button{padding:7px;font-size:8px}.lab-tabs button{font-size:8px}.practice-extra-actions{display:grid;grid-template-columns:1fr}.entry-references a{font-size:10px}}
