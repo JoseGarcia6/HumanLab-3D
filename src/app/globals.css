@@ -64,3 +64,69 @@
 .learning-next{border:1px solid #3a5276;border-radius:7px;background:#1a2d49;color:#d5e3ff;padding:8px 10px;font-size:10px}
 .learning-disclaimer{margin:13px 0 0;color:#71839b;font-size:9px;line-height:1.5}
 @media(max-width:700px){.learning-card{padding:14px}.learning-options{grid-template-columns:1fr}.learning-question{font-size:13px}}
+
+
+/* Biblioteca educativa: diccionario anatómico y práctica guiada. */
+.library-card{margin-top:18px;padding:22px}
+.library-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.library-heading h2{font:700 21px Manrope,sans-serif;letter-spacing:-.5px;margin:7px 0}
+.library-heading p{font-size:11px;line-height:1.6;color:#93a5bd;margin:0;max-width:560px}
+.library-stats{display:grid;grid-template-columns:auto auto;align-items:center;gap:3px 8px;min-width:135px;padding:10px 12px;border:1px solid #2b405b;border-radius:10px;background:#101e31}
+.library-stats strong{font:700 18px Manrope,sans-serif;color:#b9ccff}
+.library-stats span{font-size:9px;color:#8fa1ba}
+.library-tabs{display:flex;gap:8px;border-bottom:1px solid #26374d;margin-top:20px;padding-bottom:10px}
+.library-tabs button,.category-filters button{border:1px solid #2b405b;border-radius:8px;background:#101d2e;color:#aabbd1;padding:9px 12px;font-size:10px}
+.library-tabs button.active,.category-filters button.active{border-color:#6c8bd0;background:#1a2e4d;color:#e5edff}
+.dictionary-filters{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px;align-items:center;margin-top:17px}
+.dictionary-search{display:flex;align-items:center;gap:8px;min-width:0;border:1px solid #2b405b;border-radius:8px;background:#0b1421;color:#91a6c4;padding:10px 11px}
+.dictionary-search>span{font-size:18px}
+.dictionary-search input{min-width:0;width:100%;border:0;outline:0;background:transparent;color:#e6eefb;font-size:11px}
+.dictionary-search input::placeholder{color:#657890}
+.dictionary-search button{border:0;background:transparent;color:#91a4bd;font-size:17px}
+.category-filters{display:flex;gap:5px;flex-wrap:wrap}
+.category-filters button{padding:9px 10px}
+.dictionary-result-count{font-size:9px;color:#7187a3;margin:13px 0}
+.dictionary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.dictionary-entry{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border:1px solid #273a52;border-radius:11px;background:#0e1929;padding:15px}
+.dictionary-entry-top{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%}
+.entry-category{display:inline-flex;border-radius:5px;padding:5px 7px;font-size:8px;font-weight:700;background:#1b304b;color:#b9d0ff}
+.entry-category.fisiologia{background:#15362f;color:#a4e8d2}
+.entry-category.enfermedad{background:#3b2930;color:#ffc1c8}
+.entry-system{font-size:8px;color:#879bb7;text-align:right}
+.dictionary-entry h3{font:700 15px Manrope,sans-serif;color:#e7efff;margin:12px 0 7px}
+.dictionary-entry>p{font-size:10px;line-height:1.65;color:#a6b6cb;margin:0 0 13px}
+.entry-detail{display:grid;gap:4px;border-top:1px solid #22334a;padding-top:10px;width:100%}
+.entry-detail strong,.entry-related>strong{font-size:9px;color:#8097b6}
+.entry-detail span{font-size:9px;line-height:1.55;color:#b7c6d9}
+.entry-related{margin-top:11px;width:100%}
+.entry-related>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.entry-related>div span{border:1px solid #283d57;border-radius:5px;background:#122137;color:#9eb4d2;padding:4px 6px;font-size:8px}
+.entry-explore{border:1px solid #3a5276;border-radius:7px;background:#1a2d49;color:#d5e3ff;padding:8px 10px;font-size:9px;margin-top:12px}
+.entry-explore:hover{border-color:#7695d5;background:#213a5d}
+.dictionary-empty{grid-column:1/-1;padding:28px;border:1px dashed #334862;border-radius:10px;text-align:center;color:#cbd8eb}
+.dictionary-empty p{font-size:10px;color:#8499b4}
+.library-disclaimer{margin:15px 0 0;color:#7488a3;font-size:9px;line-height:1.6}
+.practice-area{margin-top:17px}
+.practice-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px}
+.practice-toolbar label{display:grid;gap:7px;font-size:10px;color:#8fa3be}
+.practice-toolbar select{min-width:180px;border:1px solid #2b405b;border-radius:8px;background:#101d2e;color:#dbe6f7;padding:10px;font-size:10px}
+.practice-score{display:flex;align-items:center;gap:7px;border:1px solid #2b405b;border-radius:8px;background:#101d2e;padding:9px 11px;font-size:9px;color:#91a4bd}
+.practice-score strong{font-size:14px;color:#c5d5ff;margin-right:7px}
+.question-box{margin-top:15px;border:1px solid #293d56;border-radius:12px;background:#0e1929;padding:20px}
+.question-meta{display:flex;justify-content:space-between;gap:10px;color:#91a9ce;font-size:9px}
+.question-box h3{font:700 17px/1.5 Manrope,sans-serif;color:#edf3ff;margin:16px 0}
+.question-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.question-options button{min-height:48px;text-align:left;border:1px solid #2b405b;border-radius:8px;background:#122035;color:#c3d0e3;padding:11px;font-size:10px}
+.question-options button:hover:not(:disabled){border-color:#7190d0;background:#1a2d49}
+.question-options button:disabled{cursor:default}
+.question-options button.correct{border-color:#3b9a7b;background:#12362f;color:#a8f0d8}
+.question-options button.incorrect{border-color:#ad5a68;background:#3a2029;color:#ffc2cb}
+.question-feedback{margin-top:13px;border:1px solid #334861;border-radius:8px;background:#101e31;padding:13px;color:#c0cede;font-size:10px;line-height:1.6}
+.question-feedback strong{color:#ffc1ca}
+.question-feedback.correct strong{color:#9ce6cc}
+.question-feedback p{margin:5px 0 0}
+.question-feedback button{display:block;margin-top:9px;border:0;background:transparent;color:#b7ccff;padding:0;font-size:9px}
+.question-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:13px}
+.question-actions>span{font-size:9px;color:#8095b0}
+@media(max-width:900px){.dictionary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dictionary-filters{grid-template-columns:1fr}.category-filters{justify-content:flex-start}}
+@media(max-width:600px){.library-card{padding:14px}.library-heading{display:block}.library-heading h2{font-size:18px}.library-stats{display:flex;align-items:center;gap:6px;margin-top:13px;width:max-content}.library-stats strong{font-size:15px;margin-left:5px}.library-stats span{font-size:8px}.library-tabs{gap:5px}.library-tabs button{flex:1;padding:9px 6px;font-size:9px}.dictionary-grid{grid-template-columns:1fr}.dictionary-filters{gap:9px}.category-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.category-filters button{padding:8px 4px;font-size:9px}.practice-toolbar{display:grid;grid-template-columns:1fr}.practice-toolbar select{width:100%}.practice-score{justify-content:space-between}.question-box{padding:14px}.question-box h3{font-size:14px}.question-options{grid-template-columns:1fr}.question-options button{min-height:40px}.question-actions{align-items:flex-start;flex-direction:column}}
