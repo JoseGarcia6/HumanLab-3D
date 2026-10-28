@@ -88,7 +88,7 @@ export default function Anatomia3DPage() {
           <div className="anatomy-search"><span aria-hidden="true">⌕</span><input id="structure-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ej. corazón, pulmones…" /><kbd>/</kbd></div>
           <div className="anatomy-section-label">SISTEMAS DEL CUERPO</div>
           <div className="anatomy-system-list">
-            {systems.map((system) => <button key={system.id} className={activeSystem === system.id ? "anatomy-system active" : "anatomy-system"} onClick={() => setActiveSystem(system.id)} aria-pressed={activeSystem === system.id}>
+            {systems.map((system) => <button key={system.id} className={activeSystem === system.id ? "anatomy-system active" : "anatomy-system"} onClick={() => { setActiveSystem(system.id); if (system.id !== "all") { const first = structures.find((item) => item.system === system.id); if (first) setSelected(first.id); } }} aria-pressed={activeSystem === system.id}>
               <span className="anatomy-system-icon" style={{ color: system.color }}>{system.icon}</span><span>{system.name}</span>{activeSystem === system.id && <i />}
             </button>)}
           </div>
