@@ -46,7 +46,7 @@ const organInfo: Record<string,{title:string;system:string;function:string}> = {
 export default function Home(){
  const [activeSystem,setActiveSystem]=useState("all"); const [selected,setSelected]=useState("heart"); const [query,setQuery]=useState(""); const [mode,setMode]=useState<"anatomy"|"lab">("anatomy"); const [sex,setSex]=useState<"f"|"m">("m"); const [heartRate,setHeartRate]=useState(72); const [breathRate,setBreathRate]=useState(16); const [running,setRunning]=useState(true);
  const system=systems.find(s=>s.id===activeSystem)??systems[0]; const info=organInfo[selected]??organInfo.heart;
- const filteredStructures=useMemo(()=>{const q=query.trim().toLocaleLowerCase("es");return structures.filter(item=>(activeSystem==="all"||item.system===activeSystem)&&(!q||[item.name,item.description,...item.tags].some(value=>value.toLocaleLowerCase("es").includes(q))))},[activeSystem,query]);
+ const filteredStructures=useMemo(()=>{const q=query.trim().toLocaleLowerCase("es");return structures.filter(item=>(q?true:(activeSystem==="all"||item.system===activeSystem))&&(!q||[item.name,item.description,...item.tags].some(value=>value.toLocaleLowerCase("es").includes(q))))},[activeSystem,query]);
  const chooseStructure=(item:Structure)=>{setSelected(item.id);setActiveSystem(item.system)};
  const stats=useMemo(()=>({cardiac:heartRate,respiratory:breathRate,oxygen:Math.round(98-Math.max(0,breathRate-20)*0.5)}),[heartRate,breathRate]);
  return <main className="app-shell">
