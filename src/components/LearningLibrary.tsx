@@ -93,14 +93,18 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
       const saved = window.localStorage.getItem("humanlab-learning-progress-v1");
       if (saved) {
         const progress = JSON.parse(saved) as { answered?: number; score?: number; wrongIds?: string[] };
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.\n        setAnswered(Number.isFinite(progress.answered) ? Math.max(0, progress.answered ?? 0) : 0);
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.\n        setScore(Number.isFinite(progress.score) ? Math.max(0, progress.score ?? 0) : 0);
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.\n        setWrongIds(Array.isArray(progress.wrongIds) ? progress.wrongIds.filter((id) => typeof id === "string") : []);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.
+        setAnswered(Number.isFinite(progress.answered) ? Math.max(0, progress.answered ?? 0) : 0);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.
+        setScore(Number.isFinite(progress.score) ? Math.max(0, progress.score ?? 0) : 0);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.
+        setWrongIds(Array.isArray(progress.wrongIds) ? progress.wrongIds.filter((id) => typeof id === "string") : []);
       }
     } catch {
       // El aprendizaje sigue funcionando si el navegador bloquea el almacenamiento local.
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- prevents writing defaults before the saved state is loaded.\n    setHydrated(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- prevents writing defaults before the saved state is loaded.
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
