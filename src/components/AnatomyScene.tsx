@@ -19,7 +19,8 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
  const skin=sex==="m"?"#b8c9dc":"#d2b8ce";
  return <group position={[0,-0.2,0]}>
   {/* Silueta corporal completa, ilustrativa y no clínica */}
-  <group visible={visibleLayers.integumentary!==false}>\n  <Part position={[0,2.28,0]} scale={[0.23,0.28,0.20]} color={skin} selected={selected==="skeleton"} onClick={()=>onSelect("skeleton")}/>
+  <group visible={visibleLayers.integumentary!==false}>
+  <Part position={[0,2.28,0]} scale={[0.23,0.28,0.20]} color={skin} selected={selected==="skeleton"} onClick={()=>onSelect("skeleton")}/>
   <Limb position={[0,1.93,0]} radius={0.085} length={0.20} color={skin} opacity={0.9}/>
   <Limb position={[0,1.35,0]} radius={0.32} length={0.72} color={skin} opacity={0.22}/>
   <Part position={[0,0.72,0]} scale={[0.27,0.24,0.20]} color={skin}/>
@@ -34,7 +35,8 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
    <Limb position={[s*0.16,-0.73,0]} radius={0.08} length={0.60} color={skin} opacity={0.72}/>
    <Part position={[s*0.16,-1.12,0.08]} scale={[0.10,0.08,0.20]} color={skin}/>
   </group>)}
-  </group>\n  {visible("skeletal")&&<group>
+  </group>
+  {visible("skeletal")&&<group>
    <Part position={[0,2.28,0.05]} scale={[0.19,0.23,0.17]} color="#e6ebf1" selected={selected==="skeleton"||selected==="skull"} onClick={()=>onSelect("skull")}/>
    <Limb position={[0,1.39,0.04]} radius={0.035} length={0.72} color={selected==="spine"?"#9ab8ff":"#e6ebf1"} opacity={1} onClick={()=>onSelect("spine")}/>
    {Array.from({length:7},(_,i)=><mesh key={i} position={[0,1.67-i*0.105,0.07]} scale={[0.17-i*0.009,0.025,0.045]}><sphereGeometry args={[1,14,10]}/><meshStandardMaterial color="#e6ebf1"/></mesh>)}
