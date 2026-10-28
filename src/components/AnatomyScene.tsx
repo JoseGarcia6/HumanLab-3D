@@ -1,29 +1,78 @@
 "use client";
-
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Group, Mesh } from "three";
 
-function Organ({position,scale,color,onClick,selected, pulse=0.0}:{position:[number,number,number];scale:[number,number,number];color:string;onClick:()=>void;selected:boolean;pulse?:number}){
+type V = [number, number, number];
+function Part({position, scale, color, selected=false, onClick, pulse=0}:{position:V;scale:V;color:string;selected?:boolean;onClick?:()=>void;pulse?:number}) {
  const ref=useRef<Mesh>(null);
- useFrame(({clock})=>{if(ref.current){const wave=1+Math.sin(clock.elapsedTime*(pulse||1)*2)*0.025;ref.current.scale.set(scale[0]*wave,scale[1]*wave,scale[2]*wave)}});
- return <mesh ref={ref} position={position} scale={scale} onClick={e=>{e.stopPropagation();onClick()}}><sphereGeometry args={[1,28,24]}/><meshStandardMaterial color={color} roughness={0.42} metalness={0.04} emissive={selected?color:"#000000"} emissiveIntensity={selected?0.18:0}/></mesh>
+ useFrame(({clock})=>{if(ref.current){const f=pulse?1+Math.sin(clock.elapsedTime*pulse*2)*0.035:1;ref.current.scale.set(scale[0]*f,scale[1]*f,scale[2]*f)}});
+ return <mesh ref={ref} position={position} onClick={e=>{if(onClick){e.stopPropagation();onClick()}}}><sphereGeometry args={[1,24,20]}/><meshStandardMaterial color={color} roughness={0.5} emissive={selected?color:"#000"} emissiveIntensity={selected?0.15:0}/></mesh>;
 }
-export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breathRate,running}:{activeSystem:string;selected:string;onSelect:(id:string)=>void;sex:"f"|"m";heartRate:number;breathRate:number;running:boolean}){
- const root=useRef<Group>(null); const lungs=useRef<Group>(null);
- useFrame(({clock})=>{if(root.current){root.current.rotation.y=Math.sin(clock.elapsedTime*0.18)*0.10}if(lungs.current&&running){const b=1+Math.sin(clock.elapsedTime*breathRate/9)*0.045;lungs.current.scale.set(1,b,1)}});
- const visibility=(system:string)=>activeSystem==="all"||activeSystem===system;
- const bones=useMemo(()=>Array.from({length:9},(_,i)=>({y:1.35-i*.34})),[]);
- return <group ref={root} position={[0,-0.25,0]}>
-  {/* Stylized educational reference body; replaceable with licensed anatomical meshes. */}
-  <Organ position={[0,2.0,0]} scale={[0.39,0.43,0.30]} color="#c9d5e5" selected={selected==="skeleton"} onClick={()=>onSelect("skeleton")}/>
-  <mesh position={[0,1.48,0]}><capsuleGeometry args={[0.43,1.05,8,18]}/><meshStandardMaterial color={sex==="m"?"#526b89":"#6c719a"} transparent opacity={0.18} roughness={0.65}/></mesh>
-  {visibility("skeletal")&&<group>{bones.map((b,i)=><mesh key={i} position={[0,b.y,0.04]}><capsuleGeometry args={[i<3?0.18:0.10,0.15,4,8]}/><meshStandardMaterial color="#e3e8ef" roughness={0.72}/></mesh>)}{[-1,1].map(x=><mesh key={x} position={[x*.25,1.35,0]} rotation={[0,0,x*.18]}><capsuleGeometry args={[0.07,0.76,4,8]}/><meshStandardMaterial color="#e3e8ef"/></mesh>)}</group>}
-  {visibility("muscular")&&<group>{[-1,1].map(x=><group key={x}><Organ position={[x*.53,1.25,0]} scale={[0.17,0.48,0.18]} color="#bd6d79" selected={false} onClick={()=>onSelect("heart")}/><Organ position={[x*.20,.35,0]} scale={[0.15,.62,.15]} color="#bd6d79" selected={false} onClick={()=>onSelect("heart")}/></group>)}</group>}
-  {visibility("circulatory")&&<><Organ position={[0,1.02,.31]} scale={[.20,.24,.16]} color="#e85e68" selected={selected==="heart"} onClick={()=>onSelect("heart")} pulse={running?heartRate/30:0}/><mesh position={[0,1.45,.25]}><cylinderGeometry args={[.035,.035,.58,10]}/><meshStandardMaterial color="#e85e68"/></mesh></>}
-  {visibility("respiratory")&&<group ref={lungs}><Organ position={[-.24,1.25,.19]} scale={[.20,.39,.15]} color="#59bfd0" selected={selected==="lungs"} onClick={()=>onSelect("lungs")} pulse={running?breathRate/6:0}/><Organ position={[.24,1.25,.19]} scale={[.20,.39,.15]} color="#59bfd0" selected={selected==="lungs"} onClick={()=>onSelect("lungs")} pulse={running?breathRate/6:0}/><mesh position={[0,1.66,.2]}><cylinderGeometry args={[.045,.045,.38,12]}/><meshStandardMaterial color="#91d8df"/></mesh></group>}
-  {visibility("digestive")&&<><Organ position={[.03,.72,.23]} scale={[.22,.20,.13]} color="#dba45b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/><Organ position={[-.22,.83,.18]} scale={[.22,.12,.10]} color="#a95c51" selected={selected==="liver"} onClick={()=>onSelect("liver")}/><Organ position={[0,.36,.20]} scale={[.23,.16,.11]} color="#d99b6b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/></>}
-  <group>{[-1,1].map(x=><mesh key={x} position={[x*.65,.76,0]} rotation={[0,0,x*.08]}><capsuleGeometry args={[.105,.78,6,12]}/><meshStandardMaterial color="#8fa4bf" transparent opacity={.72}/></mesh>)}{[-1,1].map(x=><mesh key={x} position={[x*.18,-.45,0]} rotation={[0,0,x*.05]}><capsuleGeometry args={[.13,.90,6,12]}/><meshStandardMaterial color="#8fa4bf" transparent opacity={.72}/></mesh>)}</group>
-  <mesh position={[0,2.40,0]}><sphereGeometry args={[.11,20,16]}/><meshStandardMaterial color="#d4deeb" transparent opacity={.55}/></mesh>
- </group>
+function Limb({position,rotation=[0,0,0],radius=0.09,length=0.5,color="#aebed1",opacity=0.55}:{position:V;rotation?:V;radius?:number;length?:number;color?:string;opacity?:number}) {
+ return <mesh position={position} rotation={rotation}><capsuleGeometry args={[radius,length,6,12]}/><meshStandardMaterial color={color} transparent={opacity<1} opacity={opacity}/></mesh>;
+}
+export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breathRate,running}:{activeSystem:string;selected:string;onSelect:(id:string)=>void;sex:"f"|"m";heartRate:number;breathRate:number;running:boolean}) {
+ const lungs=useRef<Group>(null); const chest=useRef<Group>(null);
+ useFrame(({clock})=>{const t=clock.elapsedTime*breathRate*Math.PI/30;if(lungs.current&&running){const s=1+Math.sin(t)*0.045;lungs.current.scale.set(s,s,1)}if(chest.current&&running)chest.current.scale.y=1+Math.sin(t)*0.012});
+ const visible=(s:string)=>activeSystem==="all"||activeSystem===s;
+ const skin=sex==="m"?"#b8c9dc":"#d2b8ce";
+ return <group position={[0,-0.2,0]}>
+  {/* Silueta corporal completa, ilustrativa y no clínica */}
+  <Part position={[0,2.28,0]} scale={[0.23,0.28,0.20]} color={skin} selected={selected==="skeleton"} onClick={()=>onSelect("skeleton")}/>
+  <Limb position={[0,1.93,0]} radius={0.085} length={0.20} color={skin} opacity={0.9}/>
+  <Limb position={[0,1.35,0]} radius={0.32} length={0.72} color={skin} opacity={0.22}/>
+  <Part position={[0,0.72,0]} scale={[0.27,0.24,0.20]} color={skin}/>
+  {[-1,1].map(s=><group key={s}>
+   <Part position={[s*0.36,1.67,0]} scale={[0.16,0.16,0.15]} color={skin}/>
+   <Limb position={[s*0.48,1.39,0]} rotation={[0,0,s*-0.12]} radius={0.105} length={0.42} color={skin}/>
+   <Part position={[s*0.54,1.12,0]} scale={[0.075,0.08,0.07]} color={skin}/>
+   <Limb position={[s*0.59,0.88,0]} rotation={[0,0,s*-0.05]} radius={0.07} length={0.36} color={skin}/>
+   <Part position={[s*0.60,0.66,0.015]} scale={[0.08,0.13,0.045]} color={skin}/>
+   <Limb position={[s*0.16,0.15,0]} radius={0.135} length={0.48} color={skin} opacity={0.7}/>
+   <Part position={[s*0.16,-0.30,0]} scale={[0.10,0.11,0.10]} color={skin}/>
+   <Limb position={[s*0.16,-0.73,0]} radius={0.08} length={0.60} color={skin} opacity={0.72}/>
+   <Part position={[s*0.16,-1.12,0.08]} scale={[0.10,0.08,0.20]} color={skin}/>
+  </group>)}
+  {visible("skeletal")&&<group>
+   <Part position={[0,2.28,0.05]} scale={[0.19,0.23,0.17]} color="#e6ebf1" selected={selected==="skeleton"} onClick={()=>onSelect("skeleton")}/>
+   <Limb position={[0,1.39,0.04]} radius={0.035} length={0.72} color="#e6ebf1" opacity={1}/>
+   {Array.from({length:7},(_,i)=><mesh key={i} position={[0,1.67-i*0.105,0.07]} scale={[0.17-i*0.009,0.025,0.045]}><sphereGeometry args={[1,14,10]}/><meshStandardMaterial color="#e6ebf1"/></mesh>)}
+   {[-1,1].map(s=><group key={s}>
+    <Limb position={[s*0.27,1.65,0.02]} rotation={[0,0,s*0.85]} radius={0.035} length={0.50} color="#e6ebf1" opacity={1}/>
+    <Limb position={[s*0.31,1.34,0.02]} rotation={[0,0,s*0.95]} radius={0.03} length={0.42} color="#e6ebf1" opacity={1}/>
+    <Limb position={[s*0.34,1.04,0.02]} rotation={[0,0,s*0.9]} radius={0.025} length={0.38} color="#e6ebf1" opacity={1}/>
+    <Limb position={[s*0.16,0.15,0.02]} radius={0.055} length={0.48} color="#e6ebf1" opacity={1}/>
+    <Limb position={[s*0.16,-0.73,0.02]} radius={0.04} length={0.58} color="#e6ebf1" opacity={1}/>
+   </group>)}
+   <mesh position={[0,0.72,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[0.23,0.03,8,20]}/><meshStandardMaterial color="#e6ebf1"/></mesh>
+  </group>}
+  {visible("muscular")&&<group>{[-1,1].map(s=><group key={s}>
+   <Part position={[s*0.19,1.58,0.13]} scale={[0.16,0.19,0.10]} color="#bb6375"/>
+   <Part position={[s*0.46,1.40,0.04]} scale={[0.10,0.23,0.09]} color="#bb6375"/>
+   <Part position={[s*0.59,0.88,0.04]} scale={[0.07,0.18,0.06]} color="#bb6375"/>
+   <Part position={[s*0.16,0.14,0.05]} scale={[0.11,0.27,0.08]} color="#bb6375"/>
+   <Part position={[s*0.16,-0.73,0.05]} scale={[0.07,0.25,0.06]} color="#bb6375"/>
+  </group>)}</group>}
+  {visible("circulatory")&&<group>
+   <Part position={[0.04,1.40,0.25]} scale={[0.12,0.15,0.09]} color="#e65362" selected={selected==="heart"} onClick={()=>onSelect("heart")} pulse={running?heartRate/18:0}/>
+   <Limb position={[0,1.62,0.22]} radius={0.022} length={0.26} color="#e65362" opacity={1}/>
+   <Limb position={[0,1.15,0.23]} rotation={[0,0,Math.PI/2]} radius={0.016} length={0.30} color="#e65362" opacity={1}/>
+  </group>}
+  {visible("respiratory")&&<group ref={lungs}>
+   <Part position={[-0.16,1.49,0.20]} scale={[0.13,0.25,0.09]} color="#58bfd0" selected={selected==="lungs"} onClick={()=>onSelect("lungs")}/>
+   <Part position={[0.16,1.49,0.20]} scale={[0.13,0.25,0.09]} color="#58bfd0" selected={selected==="lungs"} onClick={()=>onSelect("lungs")}/>
+   <Limb position={[0,1.72,0.20]} radius={0.022} length={0.30} color="#91d8df" opacity={1}/>
+   <Limb position={[-0.07,1.57,0.20]} rotation={[0,0,-0.4]} radius={0.012} length={0.20} color="#91d8df" opacity={1}/>
+   <Limb position={[0.07,1.57,0.20]} rotation={[0,0,0.4]} radius={0.012} length={0.20} color="#91d8df" opacity={1}/>
+  </group>}
+  {visible("digestive")&&<group>
+   <Part position={[-0.12,1.15,0.21]} scale={[0.17,0.11,0.08]} color="#a95c51" selected={selected==="liver"} onClick={()=>onSelect("liver")}/>
+   <Part position={[0.10,1.08,0.22]} scale={[0.11,0.14,0.08]} color="#dba45b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/>
+   <Part position={[0,0.81,0.20]} scale={[0.17,0.07,0.06]} color="#d99b6b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/>
+  </group>}
+  {visible("urinary")&&<group>{[-1,1].map(s=><group key={s}><Part position={[s*0.13,0.91,0.12]} scale={[0.06,0.09,0.05]} color="#9a7bd1"/><Limb position={[s*0.10,0.72,0.13]} radius={0.008} length={0.25} color="#d4b5ff" opacity={1}/></group>)}<Part position={[0,0.54,0.13]} scale={[0.08,0.07,0.06]} color="#9a7bd1"/></group>}
+  {visible("nervous")&&<group><Part position={[0,2.28,0.15]} scale={[0.13,0.16,0.07]} color="#f0c35b" selected={selected==="nervous"} onClick={()=>onSelect("nervous")}/><Limb position={[0,1.48,0.12]} radius={0.022} length={1.1} color="#f0c35b" opacity={1}/>{[-1,1].map(s=><Limb key={s} position={[s*0.22,1.30,0.12]} rotation={[0,0,s*0.85]} radius={0.012} length={0.42} color="#f0c35b" opacity={1}/>)}</group>}
+  {visible("integumentary")&&<Limb position={[0,0.5,-0.13]} radius={0.34} length={1.55} color="#d7a98e" opacity={0.15}/>}
+ </group>;
 }
