@@ -35,8 +35,8 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
    <Part position={[s*0.16,-1.12,0.08]} scale={[0.10,0.08,0.20]} color={skin}/>
   </group>)}
   {visible("skeletal")&&<group>
-   <Part position={[0,2.28,0.05]} scale={[0.19,0.23,0.17]} color="#e6ebf1" selected={selected==="skeleton"} onClick={()=>onSelect("skeleton")}/>
-   <Limb position={[0,1.39,0.04]} radius={0.035} length={0.72} color="#e6ebf1" opacity={1}/>
+   <Part position={[0,2.28,0.05]} scale={[0.19,0.23,0.17]} color="#e6ebf1" selected={selected==="skeleton"||selected==="skull"} onClick={()=>onSelect("skull")}/>
+   <Limb position={[0,1.39,0.04]} radius={0.035} length={0.72} color={selected==="spine"?"#9ab8ff":"#e6ebf1"} opacity={1}/>
    {Array.from({length:7},(_,i)=><mesh key={i} position={[0,1.67-i*0.105,0.07]} scale={[0.17-i*0.009,0.025,0.045]}><sphereGeometry args={[1,14,10]}/><meshStandardMaterial color="#e6ebf1"/></mesh>)}
    {[-1,1].map(s=><group key={s}>
     <Limb position={[s*0.27,1.65,0.02]} rotation={[0,0,s*0.85]} radius={0.035} length={0.50} color="#e6ebf1" opacity={1}/>
@@ -45,13 +45,13 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
     <Limb position={[s*0.16,0.15,0.02]} radius={0.055} length={0.48} color="#e6ebf1" opacity={1}/>
     <Limb position={[s*0.16,-0.73,0.02]} radius={0.04} length={0.58} color="#e6ebf1" opacity={1}/>
    </group>)}
-   <mesh position={[0,0.72,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[0.23,0.03,8,20]}/><meshStandardMaterial color="#e6ebf1"/></mesh>
+   <mesh position={[0,0.72,0]} rotation={[Math.PI/2,0,0]} onClick={e=>{e.stopPropagation();onSelect("ribs")}}><torusGeometry args={[0.23,0.03,8,20]}/><meshStandardMaterial color={selected==="ribs"?"#9ab8ff":"#e6ebf1"}/></mesh>
   </group>}
   {visible("muscular")&&<group>{[-1,1].map(s=><group key={s}>
-   <Part position={[s*0.19,1.58,0.13]} scale={[0.16,0.19,0.10]} color="#bb6375"/>
-   <Part position={[s*0.46,1.40,0.04]} scale={[0.10,0.23,0.09]} color="#bb6375"/>
+   <Part position={[s*0.19,1.58,0.13]} scale={[0.16,0.19,0.10]} color={selected==="pectoral"?"#f0a0b0":"#bb6375"} selected={selected==="pectoral"} onClick={()=>onSelect("pectoral")}/>
+   <Part position={[s*0.46,1.40,0.04]} scale={[0.10,0.23,0.09]} color={selected==="biceps"?"#f0a0b0":"#bb6375"} selected={selected==="biceps"} onClick={()=>onSelect("biceps")}/>
    <Part position={[s*0.59,0.88,0.04]} scale={[0.07,0.18,0.06]} color="#bb6375"/>
-   <Part position={[s*0.16,0.14,0.05]} scale={[0.11,0.27,0.08]} color="#bb6375"/>
+   <Part position={[s*0.16,0.14,0.05]} scale={[0.11,0.27,0.08]} color={selected==="quadriceps"?"#f0a0b0":"#bb6375"} selected={selected==="quadriceps"} onClick={()=>onSelect("quadriceps")}/>
    <Part position={[s*0.16,-0.73,0.05]} scale={[0.07,0.25,0.06]} color="#bb6375"/>
   </group>)}</group>}
   {visible("circulatory")&&<group>
@@ -89,7 +89,7 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
   {visible("nervous")&&<group>
    <Part position={[0,2.28,0.22]} scale={[0.15,0.17,0.10]} color="#f0c35b" selected={selected==="brain"} onClick={()=>onSelect("brain")}/>
    {[-1,1].map(s=><Part key={s} position={[s*0.065,2.30,0.285]} scale={[0.075,0.09,0.055]} color="#f6d780" selected={selected==="brain"} onClick={()=>onSelect("brain")}/>)}
-   <Limb position={[0,1.48,0.18]} radius={0.024} length={1.1} color="#f0c35b" opacity={1}/>
+   <Limb position={[0,1.48,0.18]} radius={0.024} length={1.1} color={selected==="spinalcord"?"#fff0a6":"#f0c35b"} opacity={1}/>
    {[-1,1].map(s=><Limb key={s} position={[s*0.22,1.30,0.18]} rotation={[0,0,s*0.85]} radius={0.014} length={0.42} color="#f0c35b" opacity={1}/>)}
   </group>}
   {visible("integumentary")&&<Limb position={[0,0.5,-0.13]} radius={0.34} length={1.55} color="#d7a98e" opacity={0.15}/>}
