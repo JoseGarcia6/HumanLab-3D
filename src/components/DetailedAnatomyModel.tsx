@@ -2,7 +2,6 @@
 
 import { Clone, useGLTF } from "@react-three/drei";
 import type { ThreeElements } from "@react-three/fiber";
-import type { Group } from "three";
 
 /**
  * Loads a locally hosted glTF/GLB anatomy asset.
