@@ -10,7 +10,7 @@ function Part({position, scale, color, selected=false, onClick, pulse=0}:{positi
  return <mesh ref={ref} position={position} onClick={e=>{if(onClick){e.stopPropagation();onClick()}}}><sphereGeometry args={[1,24,20]}/><meshStandardMaterial color={color} roughness={0.5} emissive={selected?color:"#000"} emissiveIntensity={selected?0.15:0}/></mesh>;
 }
 function Limb({position,rotation=[0,0,0],radius=0.09,length=0.5,color="#aebed1",opacity=0.55,onClick}:{position:V;rotation?:V;radius?:number;length?:number;color?:string;opacity?:number;onClick?:()=>void}) {
- return <mesh position={position} rotation={rotation} onClick={e=>{if(onClick){e.stopPropagation();onClick()}}} onPointerOver={e=>{if(onClick)document.body.style.cursor="pointer"}} onPointerOut={()=>{document.body.style.cursor="auto"}}><capsuleGeometry args={[radius,length,6,12]}/><meshStandardMaterial color={color} transparent={opacity<1} opacity={opacity}/></mesh>;
+ return <mesh position={position} rotation={rotation} onClick={e=>{if(onClick){e.stopPropagation();onClick()}}} onPointerOver={()=>{if(onClick)document.body.style.cursor="pointer"}} onPointerOut={()=>{document.body.style.cursor="auto"}}><capsuleGeometry args={[radius,length,6,12]}/><meshStandardMaterial color={color} transparent={opacity<1} opacity={opacity}/></mesh>;
 }
 export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breathRate,running,visibleLayers}:{activeSystem:string;selected:string;onSelect:(id:string)=>void;sex:"f"|"m";heartRate:number;breathRate:number;running:boolean;visibleLayers:Record<string,boolean>}) {
  const lungs=useRef<Group>(null); const chest=useRef<Group>(null);
