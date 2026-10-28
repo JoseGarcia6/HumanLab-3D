@@ -89,12 +89,12 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
   const [reviewErrors, setReviewErrors] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time hydration of locally saved learning progress. */
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem("humanlab-learning-progress-v1");
       if (saved) {
         const progress = JSON.parse(saved) as { answered?: number; score?: number; wrongIds?: string[] };
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.
         setAnswered(Number.isFinite(progress.answered) ? Math.max(0, progress.answered ?? 0) : 0);
         // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate saved learning data once on mount.
         setScore(Number.isFinite(progress.score) ? Math.max(0, progress.score ?? 0) : 0);
@@ -104,9 +104,9 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
     } catch {
       // El aprendizaje sigue funcionando si el navegador bloquea el almacenamiento local.
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- prevents writing defaults before the saved state is loaded.
     setHydrated(true);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!hydrated) return;
