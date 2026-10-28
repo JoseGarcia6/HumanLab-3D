@@ -67,12 +67,31 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
    <Limb position={[0.07,1.57,0.20]} rotation={[0,0,0.4]} radius={0.012} length={0.20} color="#91d8df" opacity={1}/>
   </group>}
   {visible("digestive")&&<group>
-   <Part position={[-0.12,1.15,0.21]} scale={[0.17,0.11,0.08]} color="#a95c51" selected={selected==="liver"} onClick={()=>onSelect("liver")}/>
-   <Part position={[0.10,1.08,0.22]} scale={[0.11,0.14,0.08]} color="#dba45b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/>
-   <Part position={[0,0.81,0.20]} scale={[0.17,0.07,0.06]} color="#d99b6b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/>
+   <Part position={[-0.13,1.15,0.24]} scale={[0.19,0.12,0.10]} color="#a95c51" selected={selected==="liver"} onClick={()=>onSelect("liver")}/>
+   <Part position={[0.11,1.08,0.25]} scale={[0.105,0.15,0.09]} color="#dba45b" selected={selected==="stomach"} onClick={()=>onSelect("stomach")}/>
+   {/* Intestino delgado y colon: representación esquemática visible en la parte baja del abdomen */}
+   <mesh position={[0,0.79,0.25]} rotation={[0,0,Math.PI/2]} onClick={e=>{e.stopPropagation();onSelect("intestines")}}>
+    <torusGeometry args={[0.135,0.027,10,32]}/>
+    <meshStandardMaterial color="#d99b6b" roughness={0.55} emissive={selected==="intestines"?"#d99b6b":"#000"} emissiveIntensity={selected==="intestines"?0.18:0}/>
+   </mesh>
+   {[-1,1].map(s=><group key={s}>
+    <mesh position={[s*0.075,0.80,0.27]} rotation={[0,0,s*0.45]} onClick={e=>{e.stopPropagation();onSelect("intestines")}}><torusGeometry args={[0.075,0.018,8,24]}/><meshStandardMaterial color="#e8b18a" emissive={selected==="intestines"?"#d99b6b":"#000"} emissiveIntensity={selected==="intestines"?0.18:0}/></mesh>
+    <mesh position={[s*0.055,0.75,0.28]} rotation={[0,0,-s*0.65]} onClick={e=>{e.stopPropagation();onSelect("intestines")}}><torusGeometry args={[0.065,0.017,8,24]}/><meshStandardMaterial color="#e8b18a" emissive={selected==="intestines"?"#d99b6b":"#000"} emissiveIntensity={selected==="intestines"?0.18:0}/></mesh>
+   </group>)}
   </group>}
-  {visible("urinary")&&<group>{[-1,1].map(s=><group key={s}><Part position={[s*0.13,0.91,0.12]} scale={[0.06,0.09,0.05]} color="#9a7bd1"/><Limb position={[s*0.10,0.72,0.13]} radius={0.008} length={0.25} color="#d4b5ff" opacity={1}/></group>)}<Part position={[0,0.54,0.13]} scale={[0.08,0.07,0.06]} color="#9a7bd1"/></group>}
-  {visible("nervous")&&<group><Part position={[0,2.28,0.15]} scale={[0.13,0.16,0.07]} color="#f0c35b" selected={selected==="nervous"} onClick={()=>onSelect("nervous")}/><Limb position={[0,1.48,0.12]} radius={0.022} length={1.1} color="#f0c35b" opacity={1}/>{[-1,1].map(s=><Limb key={s} position={[s*0.22,1.30,0.12]} rotation={[0,0,s*0.85]} radius={0.012} length={0.42} color="#f0c35b" opacity={1}/>)}</group>}
+  {visible("urinary")&&<group>
+   {[-1,1].map(s=><group key={s}>
+    <Part position={[s*0.19,0.94,0.23]} scale={[0.075,0.105,0.065]} color="#9a7bd1" selected={selected==="kidneys"} onClick={()=>onSelect("kidneys")}/>
+    <Limb position={[s*0.145,0.74,0.24]} radius={0.012} length={0.24} color="#d4b5ff" opacity={1}/>
+   </group>)}
+   <Part position={[0,0.54,0.24]} scale={[0.09,0.085,0.07]} color="#9a7bd1" selected={selected==="bladder"} onClick={()=>onSelect("bladder")}/>
+  </group>}
+  {visible("nervous")&&<group>
+   <Part position={[0,2.28,0.22]} scale={[0.15,0.17,0.10]} color="#f0c35b" selected={selected==="brain"} onClick={()=>onSelect("brain")}/>
+   {[-1,1].map(s=><Part key={s} position={[s*0.065,2.30,0.285]} scale={[0.075,0.09,0.055]} color="#f6d780" selected={selected==="brain"} onClick={()=>onSelect("brain")}/>)}
+   <Limb position={[0,1.48,0.18]} radius={0.024} length={1.1} color="#f0c35b" opacity={1}/>
+   {[-1,1].map(s=><Limb key={s} position={[s*0.22,1.30,0.18]} rotation={[0,0,s*0.85]} radius={0.014} length={0.42} color="#f0c35b" opacity={1}/>)}
+  </group>}
   {visible("integumentary")&&<Limb position={[0,0.5,-0.13]} radius={0.34} length={1.55} color="#d7a98e" opacity={0.15}/>}
  </group>;
 }
