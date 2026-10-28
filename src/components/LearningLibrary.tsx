@@ -126,7 +126,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
     });
   }, [category, termQuery]);
 
-  const visibleQuestions = useMemo(() => questions.filter((item, index) => (questionTopic === "Todos" || item.topic === questionTopic) && (!reviewErrors || wrongIds.includes(String(index))), [questionTopic, reviewErrors, wrongIds]);
+  const visibleQuestions = useMemo(() => questions.filter((item, index) => (questionTopic === "Todos" || item.topic === questionTopic) && (!reviewErrors || wrongIds.includes(String(index)))), [questionTopic, reviewErrors, wrongIds]);
   const currentQuestion = visibleQuestions[questionIndex % Math.max(visibleQuestions.length, 1)];
 
   function chooseAnswer(index: number) {
