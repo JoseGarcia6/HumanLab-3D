@@ -6,8 +6,8 @@ Plataforma educativa en desarrollo para explorar anatomía humana en 3D y experi
 
 - Interfaz principal adaptable a escritorio y móvil.
 - Visor 3D interactivo con controles de órbita y zoom.
-- Explorador dedicado en `/anatomia-3d`, con identidad visual propia de HumanLab 3D.
-- Filtro por sistemas anatómicos y búsqueda de estructuras por nombre o términos relacionados.
+- Experiencia unificada en la página principal: explorador anatómico y laboratorio fisiológico en una sola interfaz.
+- Filtro por sistemas anatómicos y búsqueda de estructuras por nombre o términos relacionados, integrados en la navegación principal.
 - Panel de información para la estructura seleccionada.
 - Controles educativos para frecuencia cardíaca y respiratoria, vinculados a animaciones ilustrativas.
 - Mensajes claros sobre el alcance educativo y la ausencia de validez diagnóstica.
@@ -37,7 +37,7 @@ Abre `http://localhost:3000`.
 
 ## Hoja de ruta
 
-1. Mejorar la navegación, búsqueda y selección de estructuras.
+1. Ampliar la búsqueda y selección anatómica integrada en el laboratorio principal.
 2. Incorporar modelos anatómicos detallados, capas y aislamiento real de estructuras.
 3. Añadir simulaciones fisiológicas educativas con parámetros y límites documentados.
 4. Ampliar el catálogo de estructuras y los recursos de aprendizaje.
