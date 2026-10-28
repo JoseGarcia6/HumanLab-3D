@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import "./anatomia-3d.css";
 import Link from "next/link";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
