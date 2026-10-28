@@ -30,6 +30,7 @@ const structures: Structure[] = [
  {id:"skeleton",name:"Esqueleto",system:"skeletal",description:"Proporciona soporte, protege órganos y participa en el movimiento.",tags:["huesos","columna","cráneo"]},
  {id:"brain",name:"Encéfalo",system:"nervous",description:"Procesa información y coordina numerosas funciones.",tags:["cerebro","nervios"]},
  {id:"kidneys",name:"Riñones",system:"urinary",description:"Filtran la sangre y ayudan a mantener el equilibrio de líquidos y sales.",tags:["orina","filtración"]},
+ {id:"ureters",name:"Uréteres",system:"urinary",description:"Conductos musculares que transportan la orina desde los riñones hasta la vejiga.",tags:["orina","vías urinarias"]},
  {id:"bladder",name:"Vejiga urinaria",system:"urinary",description:"Almacena temporalmente la orina antes de su eliminación.",tags:["orina"]},
  {id:"arteries",name:"Arterias",system:"circulatory",description:"Llevan la sangre desde el corazón hacia los tejidos.",tags:["vasos sanguíneos","circulación"]},
  {id:"veins",name:"Venas",system:"circulatory",description:"Devuelven la sangre desde los tejidos hacia el corazón.",tags:["vasos sanguíneos","circulación"]},
@@ -54,7 +55,7 @@ const structureIdForName: Record<string,string> = {
  "Esqueleto":"skeleton","Cráneo":"skull","Columna":"spine","Costillas":"ribs",
  "Pectorales":"pectoral","Bíceps":"biceps","Cuádriceps":"quadriceps",
  "Encéfalo":"brain","Médula espinal":"spinalcord","Nervios":"nerves",
- "Riñones":"kidneys","Uréteres":"kidneys","Vejiga":"bladder",
+ "Riñones":"kidneys","Uréteres":"ureters","Vejiga":"bladder",
  "Piel":"skin","Cabello":"hair","Uñas":"nails"
 };
 const organInfo: Record<string,{title:string;system:string;function:string;location:string;relations:string[]}> = {
@@ -64,6 +65,7 @@ const organInfo: Record<string,{title:string;system:string;function:string;locat
  liver:{title:"Hígado",system:"Sistema digestivo",function:"Procesa nutrientes, produce bilis y participa en el metabolismo de sustancias.",location:"En la parte superior derecha del abdomen, debajo del diafragma.",relations:["Vesícula biliar","Estómago","Intestino delgado","Vasos sanguíneos"]},
  intestines:{title:"Intestinos",system:"Sistema digestivo",function:"El intestino delgado absorbe la mayoría de los nutrientes; el intestino grueso absorbe agua y contribuye a formar las heces.",location:"Ocupan gran parte de la cavidad abdominal.",relations:["Estómago","Hígado","Páncreas","Recto"]},
  kidneys:{title:"Riñones",system:"Sistema urinario",function:"Filtran la sangre para producir orina y contribuyen al equilibrio de agua, electrolitos y ácido-base.",location:"En la parte posterior del abdomen, a ambos lados de la columna vertebral.",relations:["Uréteres","Vejiga urinaria","Vasos renales","Glándulas suprarrenales"]},
+ ureters:{title:"Uréteres",system:"Sistema urinario",function:"Transportan la orina desde la pelvis renal hasta la vejiga mediante contracciones musculares coordinadas.",location:"Descienden desde cada riñón por la parte posterior del abdomen hasta la pelvis.",relations:["Riñones","Vejiga urinaria","Pelvis renal"]},
  bladder:{title:"Vejiga urinaria",system:"Sistema urinario",function:"Almacena temporalmente la orina hasta que se elimina durante la micción.",location:"En la pelvis, detrás de la sínfisis del pubis.",relations:["Uréteres","Uretra","Riñones"]},
  brain:{title:"Encéfalo",system:"Sistema nervioso",function:"Integra información sensorial y participa en el movimiento, la memoria, las emociones y la regulación de funciones corporales.",location:"Dentro de la cavidad craneal, protegido por el cráneo y las meninges.",relations:["Médula espinal","Nervios craneales","Órganos de los sentidos"]},
  skin:{title:"Piel",system:"Sistema tegumentario",function:"Actúa como barrera protectora, ayuda a regular la temperatura y contiene receptores sensoriales.",location:"Recubre la superficie externa del cuerpo.",relations:["Cabello","Uñas","Glándulas sudoríparas","Tejido subcutáneo"]},
@@ -89,7 +91,7 @@ const learningQuestions = [
  {question:"¿Qué estructura almacena temporalmente la orina?",options:["Riñón","Uréter","Vejiga urinaria"],correct:2,explanation:"La vejiga almacena la orina hasta que se elimina por la uretra.",structure:"bladder"},
  {question:"¿Qué protege principalmente el cráneo?",options:["El encéfalo","El estómago","Los pulmones"],correct:0,explanation:"Los huesos del cráneo rodean y protegen el encéfalo.",structure:"skull"},
 ];
-const focusTargets:Record<string,[number,number,number]>={heart:[0,1.15,0],lungs:[0,1.25,0],stomach:[0,0.82,0],liver:[-0.1,0.9,0],intestines:[0,0.55,0],skeleton:[0,1.1,0],skull:[0,2.0,0],spine:[0,1.2,0],ribs:[0,0.55,0],pectoral:[0,1.35,0],biceps:[0.4,1.15,0],quadriceps:[0,-0.05,0],brain:[0,2.0,0],spinalcord:[0,1.2,0],nerves:[0,1.3,0],kidneys:[0,0.7,0],bladder:[0,0.3,0],skin:[0,0.7,0],hair:[0,2.0,0],nails:[0,-0.8,0],arteries:[0,1.2,0],veins:[0,1.2,0],trachea:[0,1.6,0],bronchi:[0,1.45,0]};
+const focusTargets:Record<string,[number,number,number]>={heart:[0,1.15,0],lungs:[0,1.25,0],stomach:[0,0.82,0],liver:[-0.1,0.9,0],intestines:[0,0.55,0],skeleton:[0,1.1,0],skull:[0,2.0,0],spine:[0,1.2,0],ribs:[0,0.55,0],pectoral:[0,1.35,0],biceps:[0.4,1.15,0],quadriceps:[0,-0.05,0],brain:[0,2.0,0],spinalcord:[0,1.2,0],nerves:[0,1.3,0],kidneys:[0,0.7,0],ureters:[0,0.55,0],bladder:[0,0.3,0],skin:[0,0.7,0],hair:[0,2.0,0],nails:[0,-0.8,0],arteries:[0,1.2,0],veins:[0,1.2,0],trachea:[0,1.6,0],bronchi:[0,1.45,0]};
 export default function Home(){
  const [activeSystem,setActiveSystem]=useState("all"); const [selected,setSelected]=useState("heart"); const [query,setQuery]=useState(""); const [mode,setMode]=useState<"anatomy"|"lab">("anatomy"); const [sex,setSex]=useState<"f"|"m">("m"); const [heartRate,setHeartRate]=useState(72); const [breathRate,setBreathRate]=useState(16); const [running,setRunning]=useState(true); const [quizIndex,setQuizIndex]=useState(0); const [quizAnswer,setQuizAnswer]=useState<number|null>(null); const [visibleLayers,setVisibleLayers]=useState<Record<string,boolean>>({circulatory:true,respiratory:true,digestive:true,skeletal:true,muscular:true,nervous:true,urinary:true,integumentary:true}); const [labExperiment,setLabExperiment]=useState<"cardio"|"respiratory">("cardio"); const controlsRef=useRef<ComponentRef<typeof OrbitControls>>(null);
  useEffect(()=>{const target=focusTargets[selected];const controls=controlsRef.current;if(target&&controls){controls.target.set(target[0],target[1],target[2]);controls.update()}},[selected]);
