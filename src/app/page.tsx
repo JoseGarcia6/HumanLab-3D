@@ -6,6 +6,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { AnatomyScene } from "@/components/AnatomyScene";
 import { ExplorationGuide } from "@/components/ExplorationGuide";
+import { LearningLibrary } from "@/components/LearningLibrary";
 
 type System = { id: string; name: string; icon: string; color: string; structures: string[]; description: string };
 const systems: System[] = [
