@@ -1,13 +1,13 @@
-# Modelos anatómicos 3D
+# Modelos anatómicos propios
 
-Esta carpeta está reservada para modelos **GLB/GLTF** que HumanLab 3D cargará localmente.
+Esta carpeta queda reservada para modelos GLB/GLTF creados o adaptados por nosotros para HumanLab 3D.
 
 ## Incorporar un modelo
 
-1. Descargá el archivo desde su fuente original y verificá la licencia específica del asset.
-2. Guardalo aquí con un nombre claro, por ejemplo `torso-with-organs.glb`.
-3. Registrá fuente, autor si aplica, licencia, fecha de descarga y modificaciones en `docs/ANATOMIA_MODELOS_3D.md`.
-4. Revisá escala, orientación, nombres de mallas y peso del archivo antes de mostrarlo en el visualizador.
-5. Probá en computadora y teléfono. No borres la representación esquemática existente hasta confirmar que el modelo carga correctamente.
+1. Guardá el archivo GLB/GLTF aquí.
+2. Registrá en la documentación cómo se creó o adaptó y qué herramientas se utilizaron.
+3. Revisá escala, orientación, nombres de mallas y tamaño del archivo.
+4. Probá el modelo en una vista aislada, tanto en computadora como en teléfono.
+5. No quités la representación anatómica esquemática existente hasta comprobar que el nuevo modelo funciona correctamente.
 
-Los archivos binarios no se incluyen todavía en este commit; por tanto, la interfaz actual continúa utilizando su representación esquemática y no depende de archivos que aún no existen.
+Actualmente no se incluyen modelos binarios en esta carpeta. La aplicación sigue usando la representación esquemática y no depende de archivos externos.
