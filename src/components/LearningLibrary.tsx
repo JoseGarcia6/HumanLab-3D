@@ -178,6 +178,8 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
             <label>Área de estudio<select value={questionTopic} onChange={(event) => changeTopic(event.target.value as "Todos" | Question["topic"])}><option value="Todos">Todas las áreas</option><option value="Anatomía">Anatomía</option><option value="Fisiología">Fisiología</option><option value="Enfermedades">Enfermedades</option></select></label>
             <div className="practice-score"><span>Respondidas</span><strong>{answered}</strong><span>Aciertos</span><strong>{score}</strong><span>Por repasar</span><strong>{wrongIds.length}</strong></div>
           </div>
+          <div className="practice-extra-actions"><button type="button" className={reviewErrors ? "active" : ""} onClick={() => { setReviewErrors((value) => !value); setQuestionIndex(0); setAnswer(null); }}>{reviewErrors ? "Ver todas las preguntas" : "Repasar respuestas incorrectas"} ({wrongIds.length})</button><button type="button" onClick={() => { if (window.confirm("¿Querés borrar el progreso guardado en este navegador?")) { setAnswered(0); setScore(0); setWrongIds([]); setReviewErrors(false); setQuestionIndex(0); setAnswer(null); } }}>Reiniciar progreso</button></div>
+          {reviewErrors && wrongIds.length === 0 && <p className="review-empty">¡No hay respuestas incorrectas pendientes! Respondé preguntas para construir tu repaso personalizado.</p>}
           {currentQuestion && <div className="question-box">
             <div className="question-meta"><span>{currentQuestion.topic}</span><span>Pregunta {(questionIndex % visibleQuestions.length) + 1} de {visibleQuestions.length}</span></div>
             <h3>{currentQuestion.question}</h3>
