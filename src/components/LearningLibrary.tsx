@@ -151,7 +151,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
           <h2>Diccionario y aprendizaje</h2>
           <p>Consultá conceptos y practicá con preguntas organizadas por tema.</p>
         </div>
-        <div className="library-stats"><strong>{terms.length}</strong><span>fichas iniciales</span><strong>{questions.length}</strong><span>preguntas iniciales</span></div>
+        <div className="library-stats"><strong>{terms.length}</strong><span>fichas iniciales</span><strong>{questions.length}</strong><span>preguntas disponibles</span><strong>{answered}</strong><span>respuestas guardadas</span><strong>{answered ? Math.round((score / answered) * 100) : 0}%</strong><span>aciertos históricos</span></div>
       </div>
 
       <div className="library-tabs" role="tablist" aria-label="Secciones de aprendizaje">
