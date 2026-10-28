@@ -12,10 +12,10 @@ function Part({position, scale, color, selected=false, onClick, pulse=0}:{positi
 function Limb({position,rotation=[0,0,0],radius=0.09,length=0.5,color="#aebed1",opacity=0.55}:{position:V;rotation?:V;radius?:number;length?:number;color?:string;opacity?:number}) {
  return <mesh position={position} rotation={rotation}><capsuleGeometry args={[radius,length,6,12]}/><meshStandardMaterial color={color} transparent={opacity<1} opacity={opacity}/></mesh>;
 }
-export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breathRate,running}:{activeSystem:string;selected:string;onSelect:(id:string)=>void;sex:"f"|"m";heartRate:number;breathRate:number;running:boolean}) {
+export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breathRate,running,visibleLayers}:{activeSystem:string;selected:string;onSelect:(id:string)=>void;sex:"f"|"m";heartRate:number;breathRate:number;running:boolean;visibleLayers:Record<string,boolean>}) {
  const lungs=useRef<Group>(null); const chest=useRef<Group>(null);
  useFrame(({clock})=>{const t=clock.elapsedTime*breathRate*Math.PI/30;if(lungs.current&&running){const s=1+Math.sin(t)*0.045;lungs.current.scale.set(s,s,1)}if(chest.current&&running)chest.current.scale.y=1+Math.sin(t)*0.012});
- const visible=(s:string)=>activeSystem==="all"||activeSystem===s;
+ const visible=(s:string)=>visibleLayers[s]!==false&&(activeSystem==="all"||activeSystem===s);
  const skin=sex==="m"?"#b8c9dc":"#d2b8ce";
  return <group position={[0,-0.2,0]}>
   {/* Silueta corporal completa, ilustrativa y no clínica */}
