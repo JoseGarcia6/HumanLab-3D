@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type LibraryTerm = {
   id: string;
@@ -74,6 +74,33 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
   const [answer, setAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(0);
+  const [wrongIds, setWrongIds] = useState<string[]>([]);
+  const [reviewErrors, setReviewErrors] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("humanlab-learning-progress-v1");
+      if (saved) {
+        const progress = JSON.parse(saved) as { answered?: number; score?: number; wrongIds?: string[] };
+        setAnswered(Number.isFinite(progress.answered) ? Math.max(0, progress.answered ?? 0) : 0);
+        setScore(Number.isFinite(progress.score) ? Math.max(0, progress.score ?? 0) : 0);
+        setWrongIds(Array.isArray(progress.wrongIds) ? progress.wrongIds.filter((id) => typeof id === "string") : []);
+      }
+    } catch {
+      // El aprendizaje sigue funcionando si el navegador bloquea el almacenamiento local.
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem("humanlab-learning-progress-v1", JSON.stringify({ answered, score, wrongIds }));
+    } catch {
+      // El progreso se mantiene durante la sesión aunque no pueda persistirse.
+    }
+  }, [hydrated, answered, score, wrongIds]);
 
   const filteredTerms = useMemo(() => {
     const q = termQuery.trim().toLocaleLowerCase("es");
@@ -84,7 +111,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
     });
   }, [category, termQuery]);
 
-  const visibleQuestions = useMemo(() => questions.filter((item) => questionTopic === "Todos" || item.topic === questionTopic), [questionTopic]);
+  const visibleQuestions = useMemo(() => questions.filter((item, index) => (questionTopic === "Todos" || item.topic === questionTopic) && (!reviewErrors || wrongIds.includes(String(index))), [questionTopic, reviewErrors, wrongIds]);
   const currentQuestion = visibleQuestions[questionIndex % Math.max(visibleQuestions.length, 1)];
 
   function chooseAnswer(index: number) {
@@ -137,18 +164,19 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
                 <p>{term.definition}</p>
                 <div className="entry-detail"><strong>Ubicación / contexto</strong><span>{term.location}</span></div>
                 <div className="entry-related"><strong>Relacionado con</strong><div>{term.related.map((item) => <span key={item}>{item}</span>)}</div></div>
+                <div className="entry-references"><strong>Fuentes para ampliar</strong><a href="https://openstax.org/details/books/anatomy-and-physiology-2e" target="_blank" rel="noreferrer">OpenStax · Anatomía y fisiología</a><a href="https://medlineplus.gov/encyclopedia.html" target="_blank" rel="noreferrer">MedlinePlus · Enciclopedia médica</a></div>
                 {term.exploreId && <button className="entry-explore" type="button" onClick={() => onExplore(term.exploreId!)}>Ver en el atlas ↗</button>}
               </article>
             ))}
             {filteredTerms.length === 0 && <div className="dictionary-empty"><strong>No encontramos coincidencias.</strong><p>Probá con otro término, sistema o función.</p></div>}
           </div>
-          <p className="library-disclaimer">Las fichas son material educativo general; la información sobre enfermedades no sustituye una evaluación de profesionales de salud.</p>
+          <p className="library-disclaimer">Las referencias son recursos de consulta general para ampliar el estudio; no sustituyen la revisión de cada tema por docentes o profesionales. El contenido sobre enfermedades es educativo y no constituye diagnóstico ni tratamiento.</p>
         </div>
       ) : (
         <div className="practice-area">
           <div className="practice-toolbar">
             <label>Área de estudio<select value={questionTopic} onChange={(event) => changeTopic(event.target.value as "Todos" | Question["topic"])}><option value="Todos">Todas las áreas</option><option value="Anatomía">Anatomía</option><option value="Fisiología">Fisiología</option><option value="Enfermedades">Enfermedades</option></select></label>
-            <div className="practice-score"><span>Respondidas</span><strong>{answered}</strong><span>Aciertos</span><strong>{score}</strong></div>
+            <div className="practice-score"><span>Respondidas</span><strong>{answered}</strong><span>Aciertos</span><strong>{score}</strong><span>Por repasar</span><strong>{wrongIds.length}</strong></div>
           </div>
           {currentQuestion && <div className="question-box">
             <div className="question-meta"><span>{currentQuestion.topic}</span><span>Pregunta {(questionIndex % visibleQuestions.length) + 1} de {visibleQuestions.length}</span></div>
@@ -157,7 +185,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
             {answer !== null && <div className={"question-feedback " + (answer === currentQuestion.answer ? "correct" : "incorrect")}><strong>{answer === currentQuestion.answer ? "¡Correcto!" : "Repasemos esta respuesta"}</strong><p>{currentQuestion.explanation}</p>{currentQuestion.exploreId && <button type="button" onClick={() => onExplore(currentQuestion.exploreId!)}>Consultar estructura en el atlas ↗</button>}</div>}
             <div className="question-actions"><button type="button" className="entry-explore" onClick={nextQuestion}>{questionIndex % visibleQuestions.length === visibleQuestions.length - 1 ? "Volver al inicio" : "Siguiente pregunta"} →</button><span>Tu puntuación de esta sesión: {answered ? Math.round((score / answered) * 100) : 0}%</span></div>
           </div>}
-          <p className="library-disclaimer">Banco inicial de {questions.length} preguntas. La ampliación hacia 1,000 preguntas se realizará por módulos, revisando contenido, explicaciones y duplicados antes de publicarlas.</p>
+          <p className="library-disclaimer">Banco inicial de {questions.length} preguntas. El progreso y las respuestas por repasar se guardan en este navegador; no se envían a un servidor. La ampliación hacia 1,000 preguntas se realizará por módulos con revisión de contenido y duplicados.</p>
         </div>
       )}
     </section>
