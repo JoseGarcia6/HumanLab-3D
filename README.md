@@ -2,15 +2,20 @@
 
 Plataforma educativa en desarrollo para explorar anatomía humana en 3D y experimentar con modelos fisiológicos simplificados.
 
-## Estado actual
+## Funcionalidades actuales
 
-- Interfaz web adaptable a escritorio y móvil.
-- Escena 3D interactiva con geometría ilustrativa de referencia.
-- Selector de sistemas anatómicos y estructuras.
-- Controles educativos para frecuencia cardíaca y respiratoria.
-- Indicadores demostrativos claramente identificados como no médicos.
+- Interfaz principal adaptable a escritorio y móvil.
+- Visor 3D interactivo con controles de órbita y zoom.
+- Explorador dedicado en `/anatomia-3d`, con identidad visual propia de HumanLab 3D.
+- Filtro por sistemas anatómicos y búsqueda de estructuras por nombre o términos relacionados.
+- Panel de información para la estructura seleccionada.
+- Controles educativos para frecuencia cardíaca y respiratoria, vinculados a animaciones ilustrativas.
+- Mensajes claros sobre el alcance educativo y la ausencia de validez diagnóstica.
+- Sin dependencia de un visor externo para abrir el explorador anatómico.
 
-> La escena actual es un prototipo geométrico ilustrativo, no un atlas anatómico clínico ni un modelo fisiológico validado. Los modelos anatómicos detallados se incorporarán cuando se verifiquen sus fuentes y licencias.
+## Alcance y precisión
+
+La geometría del cuerpo y de las estructuras que se muestra actualmente es **esquemática e ilustrativa**. No equivale a un atlas anatómico clínico ni a un modelo fisiológico validado. Las opciones de presentación masculina/femenina modifican la apariencia ilustrativa, no representan dos modelos anatómicos detallados independientes. Los modelos anatómicos de mayor fidelidad se incorporarán en una fase posterior, una vez verificados su origen, calidad técnica y condiciones de licencia.
 
 ## Desarrollo
 
@@ -32,11 +37,12 @@ Abre `http://localhost:3000`.
 
 ## Hoja de ruta
 
-1. Atlas anatómico 3D y selección de estructuras.
-2. Modelos anatómicos detallados y capas.
-3. Simulaciones fisiológicas educativas.
-4. Escenarios interconectados, evaluación y optimización.
+1. Mejorar la navegación, búsqueda y selección de estructuras.
+2. Incorporar modelos anatómicos detallados, capas y aislamiento real de estructuras.
+3. Añadir simulaciones fisiológicas educativas con parámetros y límites documentados.
+4. Ampliar el catálogo de estructuras y los recursos de aprendizaje.
+5. Probar accesibilidad, rendimiento y experiencia móvil.
 
-## Licencias
+## Licencias y atribuciones
 
-El código de esta aplicación se desarrollará por separado de los modelos anatómicos de terceros. Cada recurso externo deberá conservar su atribución y respetar su licencia original.
+La interfaz y el código propio de HumanLab 3D se mantienen diferenciados de cualquier recurso de terceros. No se debe incorporar código, geometría, texturas ni documentación de otros proyectos sin revisar primero su licencia y conservar los avisos y atribuciones exigidos. Cuando se añadan recursos externos, se documentará su procedencia y licencia en esta sección o en un archivo de atribuciones específico.
