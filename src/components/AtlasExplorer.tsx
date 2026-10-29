@@ -228,7 +228,7 @@ export default function AtlasExplorer() {
           </div>}
           <div className="hl-atlas-license">
             <strong>Fuente y alcance</strong>
-            <p>BodyParts3D 4.0 · referencia masculina adulta. Modelos adaptados para visualización educativa; no sirven para diagnóstico.</p>
+            <p>BodyParts3D 4.0 © Database Center for Life Science · referencia masculina adulta. Geometría simplificada y adaptada por Human Atlas; integrada a HumanLab 3D con fines educativos. No sirve para diagnóstico.</p><a href="/ATTRIBUTION_HUMAN_ATLAS.md" target="_blank" rel="noopener noreferrer">Créditos completos y adaptaciones ↗</a>
             <a href="https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html" target="_blank" rel="noopener noreferrer">Licencia CC BY 4.0 ↗</a>
             <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noopener noreferrer">Código original Human Atlas (MIT) ↗</a>
           </div>
