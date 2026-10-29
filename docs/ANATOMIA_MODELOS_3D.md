@@ -33,3 +33,17 @@ HumanLab 3D es un proyecto educativo. Los modelos y los indicadores fisiológico
 - [ ] Incorporar un modelo propio.
 - [ ] Integrarlo de forma controlada sin eliminar la escena esquemática.
 - [ ] Probar la aplicación y validar la compilación antes de integrar los cambios.
+
+## Actualización: módulo detallado basado en Human Atlas
+
+Con autorización del responsable del proyecto, se incorporó un módulo independiente en `/atlas` que reutiliza componentes del visor Human Atlas (MIT) y geometría BodyParts3D (CC BY 4.0) con atribución. La integración no sustituye la escena esquemática ni el laboratorio fisiológico de HumanLab 3D. Los modelos detallados se solicitan al abrir esa ruta.
+
+**Pruebas pendientes antes de fusionar a `main`:**
+
+- [ ] Confirmar que `next build` termina sin errores en el commit actual.
+- [ ] Comprobar `/atlas` en el navegador y que carguen el manifiesto y los archivos de geometría.
+- [ ] Validar selección de órganos, búsqueda, capas, aislamiento y restablecimiento de vista.
+- [ ] Probar memoria y manejo táctil en Android.
+- [ ] Comprobar que la página principal, biblioteca y laboratorio anteriores siguen operativos.
+
+El módulo es educativo, no diagnóstico. Los créditos están en `public/ATTRIBUTION_HUMAN_ATLAS.md`.
