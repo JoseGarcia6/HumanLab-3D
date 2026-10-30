@@ -103,6 +103,13 @@ export function AnatomyScene({activeSystem,selected,onSelect,sex,heartRate,breat
     <Limb position={[s*0.09,0.70,0.32]} rotation={[0,0,-s*0.55]} radius={0.009} length={0.08} color="#df92b9" opacity={1}/>
    </group>)}
   </group>}
+  {sex==="m"&&visible("reproductive")&&<group>
+   <Part position={[0,0.50,0.29]} scale={[0.06,0.05,0.05]} color="#b98fa8"
+     selected={selected==="prostate"} onClick={()=>onSelect("prostate")}/>
+   {[-1,1].map(side=><Part key={side} position={[side*0.075,0.29,0.26]}
+     scale={[0.065,0.085,0.055]} color="#b98fa8"
+     selected={selected==="testes"} onClick={()=>onSelect("testes")}/>)}
+  </group>}
   {visible("integumentary")&&<Limb position={[0,0.5,-0.13]} radius={sex==="f"?0.32:0.34} length={1.55} color="#d7a98e" opacity={0.15}/>}
  </group>;
 }

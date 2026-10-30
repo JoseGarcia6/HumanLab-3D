@@ -73,11 +73,13 @@ const LEGACY_QUERIES:Record<string,string[]>={
   skin:["piel"],
   uterus:["útero"],
   ovaries:["ovario"],
+  testes:["testículo","testis","testicle"],
+  prostate:["próstata","prostate"],
 };
 const ALIASES:ReadonlyArray<[string,string]>= [
  ["corazon","heart"],["pulmon","lung"],["pulmones","lung"],
  ["higado","liver"],["rinon","kidney"],["rinones","kidney"],
- ["utero","uterus"],["ovarios","ovary"],["estomago","stomach"],
+ ["utero","uterus"],["ovarios","ovary"],["testiculo","testis"],["prostata","prostate"],["estomago","stomach"],
  ["craneo","skull"],["traquea","trachea"],["femur","femur"]
 ];
 
