@@ -2,6 +2,9 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import { AnatomyScene } from "@/components/AnatomyScene";
 import {
   DEFAULT_VISIBLE,
   SYSTEMS,
@@ -260,8 +263,18 @@ export default function DetailedAtlasViewer({sex,activeSystem,selectedStructure,
       </div>
 
       <div className="unified-3d-stage" role="region" aria-label={female?"Anatomía femenina detallada 3D":"Anatomía masculina detallada 3D"}>
-        {atlas&&<DetailedScene key={sex+"-"+attempt} atlas={atlas} state={state} showNames={showNames}
+        {atlas&&!error&&<DetailedScene key={sex+"-"+attempt} atlas={atlas} state={state} showNames={showNames}
           cleanView={female&&clean} onSelect={pickPart} onProgress={setProgress} onError={setError}/>}
+        {error && !/WebGL/i.test(error) && <div className="unified-schematic-fallback" aria-label="Representación anatómica esquemática de respaldo">
+          <Canvas dpr={[1,1.5]} camera={{position:[1.2,1.35,4.5],fov:39}}>
+            <ambientLight intensity={1.15}/>
+            <directionalLight position={[3,4,5]} intensity={1.3}/>
+            <AnatomyScene activeSystem={activeSystem} selected={selectedStructure}
+              onSelect={onSelectLegacy} sex={sex} heartRate={72} breathRate={16}
+              running={false} visibleLayers={layers}/>
+            <OrbitControls enableDamping minDistance={1.6} maxDistance={8} target={[0,0.9,0]}/>
+          </Canvas>
+        </div>}
         {!atlas&&!error&&<div className="unified-stage-message" role="status">Cargando catálogo {female?"femenino":"masculino"}…</div>}
         {atlas&&progress<100&&!error&&<div className="unified-stage-message" role="status">
           <strong>Descargando geometría anatómica · {progress}%</strong>
@@ -269,7 +282,7 @@ export default function DetailedAtlasViewer({sex,activeSystem,selectedStructure,
           <small>La primera carga puede consumir {female?"alrededor de 55":"alrededor de 33"} MB. Recomendamos Wi-Fi.</small>
         </div>}
         {error&&<div className="unified-stage-message unified-error" role="alert">
-          <strong>Problema al cargar la anatomía 3D</strong><p>{error}</p>
+          <strong>Problema al cargar la anatomía detallada</strong><p>{error}</p><p>{/WebGL/i.test(error)?"El visualizador necesita WebGL habilitado.":"Podés continuar estudiando con el esquema anatómico mientras se recupera la carga."}</p>
           <button type="button" onClick={retry}>Reintentar</button>
         </div>}
         <div className="unified-stage-hint">Arrastrá para girar · pellizcá para acercar · tocá una estructura</div>

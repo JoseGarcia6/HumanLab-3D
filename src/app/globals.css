@@ -275,3 +275,8 @@
 .unified-model-source a:hover{color:#e7efff}
 
 .unified-lab-placeholder{height:100%;display:grid;place-items:center;padding:20px;color:#b8cdea;font-size:12px;line-height:1.6;text-align:center;max-width:360px;margin:auto}
+
+/* Respaldo esquemático automático si el recurso anatómico externo falla. */
+.unified-schematic-fallback{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at 50% 42%,#243a58,#0d192a 68%)}
+.unified-schematic-fallback canvas{width:100%;height:100%;touch-action:none}
+@media(max-width:680px){.practice-score{flex-wrap:wrap;justify-content:flex-start;gap:6px 9px}}

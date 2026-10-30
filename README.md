@@ -46,3 +46,12 @@ Abre `http://localhost:3000`.
 ## Licencias y atribuciones
 
 La interfaz y el código propio de HumanLab 3D se mantienen diferenciados de cualquier recurso de terceros. No se debe incorporar código, geometría, texturas ni documentación de otros proyectos sin revisar primero su licencia y conservar los avisos y atribuciones exigidos. Cuando se añadan recursos externos, se documentará su procedencia y licencia en esta sección o en un archivo de atribuciones específico.
+
+## Plataforma educativa unificada
+
+La página principal de HumanLab 3D reúne la anatomía 3D de hombre y mujer, las capas de sistemas, el laboratorio de corazón y pulmones, el diccionario, las evaluaciones y el seguimiento de aciertos, fallos y repaso, manteniendo la identidad visual original. Los resultados se guardan en el navegador.
+
+- Las capas de huesos y músculos se activan cuando se necesitan; la vista de estudio no oculta los órganos.
+- Se conservan las posiciones de origen de las mallas anatómicas, sin desplazamientos artificiales de ojos.
+- Si no se puede descargar el modelo detallado, aparece automáticamente un esquema 3D interactivo con opción de reintentar; no se obliga al alumno a cambiar de modo.
+- El modelo y la simulación son educativos, no una herramienta clínica. Las discrepancias de la geometría original requieren inspección visual independiente.

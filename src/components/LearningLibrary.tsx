@@ -195,7 +195,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
           <h2>Diccionario y aprendizaje</h2>
           <p>Consultá conceptos y practicá con preguntas organizadas por tema.</p>
         </div>
-        <div className="library-stats" id="progreso-estudio"><strong>{terms.length}</strong><span>fichas iniciales</span><strong>{questions.length}</strong><span>preguntas disponibles</span><strong>{answered}</strong><span>respuestas respondidas</span><strong>{answered ? Math.round((score / answered) * 100) : 0}%</strong><span>aciertos históricos</span><strong>{wrongIds.length}</strong><span>errores por repasar</span></div>
+        <div className="library-stats" id="progreso-estudio"><strong>{terms.length}</strong><span>fichas iniciales</span><strong>{questions.length}</strong><span>preguntas disponibles</span><strong>{answered}</strong><span>respuestas respondidas</span><strong>{answered ? Math.round((score / answered) * 100) : 0}%</strong><span>aciertos históricos</span><strong>{Math.max(0,answered-score)}</strong><span>fallos acumulados</span><strong>{wrongIds.length}</strong><span>errores por repasar</span></div>
       </div>
 
       <div className="library-tabs" role="tablist" aria-label="Secciones de aprendizaje">
@@ -230,7 +230,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
         <div className="practice-area">
           <div className="practice-toolbar">
             <label>Área de estudio<select value={questionTopic} onChange={(event) => changeTopic(event.target.value as "Todos" | Question["topic"])}><option value="Todos">Todas las áreas</option><option value="Anatomía">Anatomía</option><option value="Fisiología">Fisiología</option><option value="Enfermedades">Enfermedades</option></select></label>
-            <div className="practice-score"><span>Respondidas</span><strong>{answered}</strong><span>Aciertos</span><strong>{score}</strong><span>Por repasar</span><strong>{wrongIds.length}</strong></div>
+            <div className="practice-score"><span>Respondidas</span><strong>{answered}</strong><span>Aciertos</span><strong>{score}</strong><span>Fallos</span><strong>{Math.max(0,answered-score)}</strong><span>Por repasar</span><strong>{wrongIds.length}</strong></div>
           </div>
           <div className="practice-extra-actions"><button type="button" className={reviewErrors ? "active" : ""} onClick={() => { setReviewErrors((value) => !value); setQuestionIndex(0); setAnswer(null); }}>{reviewErrors ? "Ver todas las preguntas" : "Repasar respuestas incorrectas"} ({wrongIds.length})</button><button type="button" onClick={() => { if (window.confirm("¿Querés borrar el progreso guardado en este navegador?")) { setAnswered(0); setScore(0); setWrongIds([]); setReviewErrors(false); setQuestionIndex(0); setAnswer(null); } }}>Reiniciar progreso</button></div>
           {reviewErrors && wrongIds.length === 0 && <p className="review-empty">¡No hay respuestas incorrectas pendientes! Respondé preguntas para construir tu repaso personalizado.</p>}
