@@ -8,6 +8,7 @@ import {
   type Atlas, type Concept, type SceneState, type SystemId, type View,
 } from "@/lib/atlas/anatomy";
 import { anatomicalNameEs, normalizedTerm, ANATOMICAL_SYSTEMS_ES, SYSTEM_DESCRIPTIONS_ES } from "@/lib/atlas/names-es";
+import { LearningLibrary } from "@/components/LearningLibrary";
 import { FEMALE_SYSTEMS, FEMALE_STRUCTURES, FEMALE_VISIBLE_DEFAULT, type FemaleSystemId } from "@/lib/atlas/female-schematic";
 
 const DetailedScene = dynamic(() => import("@/components/AtlasDetailedScene"), { ssr: false });
@@ -187,6 +188,14 @@ export default function AtlasExplorer() {
         </div>
       </header>
 
+      <nav className="hl-atlas-study-nav" aria-label="Secciones educativas de HumanLab 3D">
+        <a href="/" className="hl-atlas-study-home">⌂ Inicio</a>
+        <a href="#hl-atlas-stage">◉ Atlas 3D</a>
+        <a href="#diccionario">▤ Diccionario</a>
+        <a href="#practicar">✎ Cuestionarios y puntuación</a>
+        <a href="#repasar-errores">↺ Repasar errores</a>
+        <a href="/#laboratorio-fisiologico">♥ Corazón y pulmones</a>
+      </nav>
       <div className="hl-atlas-body-switch">
         <div className="hl-atlas-body-intro">
           <strong>Tipo de cuerpo</strong>
@@ -237,7 +246,7 @@ export default function AtlasExplorer() {
           </>}
         </aside>
 
-        <section className="hl-atlas-center" aria-label="Visualizador de anatomía humana tridimensional">
+        <section id="hl-atlas-stage" className="hl-atlas-center" aria-label="Visualizador de anatomía humana tridimensional">
           <div className="hl-atlas-viewer">
             {body==="female"&&femaleLite&&<FemaleAnatomyViewer
               key={femaleReset} visible={femaleVisible} selected={femaleSelected}
@@ -377,6 +386,34 @@ export default function AtlasExplorer() {
           </div>
         </aside>
       </div>
+      <section className="hl-atlas-study-section" aria-label="Diccionario anatómico y ejercicios">
+        <div className="hl-atlas-study-heading">
+          <div>
+            <span>ESTUDIÁ · PRACTICÁ · REPASÁ</span>
+            <h2>Centro de aprendizaje HumanLab 3D</h2>
+            <p>El atlas detallado es una herramienta de estudio. Consultá el diccionario, respondé preguntas y revisá tus errores con la puntuación guardada en este navegador.</p>
+          </div>
+          <a href="/#laboratorio-fisiologico">♥ Abrir simulación del corazón y los pulmones</a>
+        </div>
+        <LearningLibrary onExplore={(id)=>{
+          const matches:Record<string,string>={
+            heart:"corazón",lungs:"pulmón",brain:"encéfalo",skull:"cráneo",spine:"vértebra",
+            ribs:"costilla",biceps:"bíceps",liver:"hígado",kidneys:"riñón",ureters:"uréter",
+            stomach:"estómago",bladder:"vejiga",arteries:"arteria",veins:"vena",
+            trachea:"tráquea",bronchi:"bronquio",intestines:"intestino",nerves:"nervio",
+            skeleton:"hueso",pectoral:"pectoral",quadriceps:"cuádriceps",
+            spinalcord:"médula espinal",skin:"piel"
+          };
+          const target=matches[id]??id;
+          const match=currentAtlas?.concepts.find(concept=>
+            normalizedTerm(anatomicalNameEs(concept.name)).includes(normalizedTerm(target))
+            ||normalizedTerm(concept.name).includes(normalizedTerm(target))
+          );
+          if(match)chooseConcept(match);
+          else setQuery(target);
+          document.getElementById("hl-atlas-stage")?.scrollIntoView({behavior:"smooth",block:"start"});
+        }}/>
+      </section>
     </main>
   );
 }
