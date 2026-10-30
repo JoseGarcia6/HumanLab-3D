@@ -8,7 +8,7 @@ import {mergeGeometries} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {createExplosionLayout} from '@/lib/atlas/explosion-layout';
 import {decodeModelResponse} from '@/lib/atlas/model-download';
 import {PointerTap} from '@/lib/atlas/pointer-tap';
-import {SYSTEMS,type Atlas,type SceneState} from '@/lib/atlas/anatomy';
+import {SYSTEMS,type Atlas,type SceneState,type Part} from '@/lib/atlas/anatomy';
 import {anatomicalNameEs} from '@/lib/atlas/names-es';
 // Recognizable structures available in BodyParts3D 4.0. A named subset keeps mobile labels readable.
 const KEY_LABELS: ReadonlyArray<readonly [string,string]> = [
@@ -33,10 +33,22 @@ const FEMALE_KEY_LABELS:ReadonlyArray<readonly [string,string]>=[
 ];
 const TRANSLATED_NAMES=new Map([...KEY_LABELS,...FEMALE_KEY_LABELS]);
 const nameInSpanish=(name:string)=>TRANSLATED_NAMES.get(name)??anatomicalNameEs(name);
-interface Props {atlas:Atlas;state:SceneState;showNames:boolean;onSelect:(id:string)=>void;onProgress:(n:number)=>void;onError:(s:string)=>void}
-export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,onError}:Props){
- const host=useRef<HTMLDivElement>(null),latest=useRef(state),select=useRef(onSelect),namesRef=useRef(showNames);
- latest.current=state;select.current=onSelect;namesRef.current=showNames;
+/**
+ * Female Atlas combines two original eye datasets (HuBMAP and BodyParts3D).
+ * Their coordinate centers differ by about 2 cm, so both pairs look like
+ * four eyes if shown simultaneously. Hide only the secondary BP3D ocular
+ * layers in the clean presentation. Do not remove meshes or atlas metadata:
+ * selecting an individual structure reveals it for teaching.
+ */
+function redundantFemaleOcularPart(part:Part):boolean {
+ if(!part.id.startsWith('BP3D_') || part.system!=='sensory')return false;
+ const name=part.name.toLowerCase();
+ return /(?:anterior chamber of .* eyeball|corona ciliaris|optic part of .* retina|tarsal plate|vitreous body|lacrimal canaliculus|lacrimal gland|lacrimal lake|nasolacrimal duct|lacrimal sac|common tendinous ring)/.test(name);
+}
+interface Props {atlas:Atlas;state:SceneState;showNames:boolean;cleanView:boolean;onSelect:(id:string)=>void;onProgress:(n:number)=>void;onError:(s:string)=>void}
+export default function AnatomyScene({atlas,state,showNames,cleanView,onSelect,onProgress,onError}:Props){
+ const host=useRef<HTMLDivElement>(null),latest=useRef(state),select=useRef(onSelect),namesRef=useRef(showNames),cleanRef=useRef(cleanView);
+ latest.current=state;select.current=onSelect;namesRef.current=showNames;cleanRef.current=cleanView;
  useEffect(()=>{
   const el=host.current!;let disposed=false,frame=0,dirty=true,ready=false,lastView='',lastReset=-1,lastIsolate='',layoutKey='',amount=0;
   let lastState:SceneState|null=null;
@@ -75,7 +87,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
   const featured=(atlas.sex==='female'?FEMALE_KEY_LABELS:KEY_LABELS).flatMap(([name,title])=>{const index=partIndexByName.get(name);return index===undefined?[]:[{index,title}];});
   const labelCache=new Map<number,HTMLButtonElement>();
   const labelPoint=new T.Vector3();
-  let lastNamesShown=namesRef.current;
+  let lastNamesShown=namesRef.current,lastClean=cleanRef.current;
   const syncLabels=(s:SceneState)=>{
    if(!ready||!namesRef.current){labelLayer.replaceChildren();return;}
    const mobile=el.clientWidth<650,budget=mobile?7:12;
@@ -154,7 +166,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
    const heightDistance=modelSize.y/(2*tan*(mobile?.77:.80));
    const horizontalSpan=view==='side'?Math.max(modelSize.z,.26):Math.hypot(modelSize.x,modelSize.z);
    const widthDistance=horizontalSpan/(2*tan*aspect*(mobile?.83:.80));
-   const normalDistance=Math.max(heightDistance,widthDistance,1.6);
+   const normalDistance=Math.max(heightDistance,widthDistance,1.6)*(atlas.sex==='female'?1.23:1);
    const packingDistance=Math.max(packingHeight,packingWidth/aspect)/(2*tan)*1.20;
    const distance=T.MathUtils.lerp(normalDistance,Math.max(.3,packingDistance),extent);
    if(extent>.8)view='front';
@@ -178,12 +190,20 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
   const clock=new T.Clock();let lastExtent=-1;
   const animate=()=>{
    if(disposed)return;frame=requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05),s=latest.current;
-   const changed=lastState?.visible!==s.visible||lastState?.selected!==s.selected||lastState?.isolate!==s.isolate;
+   // Changing the clean view must refresh both GPU visibility and picking, not just UI.
+   const cleanChanged=lastClean!==cleanRef.current;
+   if(cleanChanged)lastClean=cleanRef.current;
+   const changed=cleanChanged||lastState?.visible!==s.visible||lastState?.selected!==s.selected||lastState?.isolate!==s.isolate;
+   const isDisplayed=(p:Part,selection:Set<string>,visible:Set<string>):boolean=>{
+    const chosen=selection.has(p.id);
+    return (s.isolate?chosen:chosen||visible.has(p.system))&&
+      (chosen||!cleanRef.current||atlas.sex!=='female'||!redundantFemaleOcularPart(p));
+   };
    const moving=Math.abs(amount-s.explode)>.0001;
    if(moving){amount=T.MathUtils.damp(amount,s.explode,8,dt);dirty=true;}
    if(changed||moving||lastExtent<0){
     const visible=new Set(s.visible),selection=new Set(s.selected);
-    const visibleParts=atlas.parts.filter(p=>s.isolate?selection.has(p.id):visible.has(p.system)||selection.has(p.id));
+    const visibleParts=atlas.parts.filter(p=>isDisplayed(p,selection,visible));
     const nextLayoutKey=visibleParts.map(p=>p.id).join(',')+':'+camera.aspect.toFixed(3);
     if(nextLayoutKey!==layoutKey){const layout=createExplosionLayout(visibleParts,camera.aspect);packingWidth=layout.width;packingHeight=layout.height;atlas.parts.forEach((p,i)=>{const cell=layout.cells.get(p.id);offsets[i]=cell?new T.Vector3(cell.x,cell.y+.85,0):centers[i].clone();});layoutKey=nextLayoutKey;if(amount>.05&&!s.isolate)fit(s.view,Math.max(0,(amount-.3)/.7));}
 
@@ -191,7 +211,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
      const c=centers[i],destination=offsets[i];let dx=0,dy=0,dz=0;
      if(amount<=.45){const t=amount/.45;const group=SYSTEMS.findIndex(sys=>sys.id===p.system);const angle=group/SYSTEMS.length*Math.PI*2;dx=Math.sin(angle)*t*.48;dy=(c.y-.85)*t*.28;dz=Math.cos(angle)*t*.48;}
      else {const t=(amount-.45)/.55,group=SYSTEMS.findIndex(sys=>sys.id===p.system),angle=group/SYSTEMS.length*Math.PI*2;dx=T.MathUtils.lerp(Math.sin(angle)*.48,destination.x-c.x,t);dy=T.MathUtils.lerp((c.y-.85)*.28,destination.y-c.y,t);dz=T.MathUtils.lerp(Math.cos(angle)*.48,-c.z,t);}
-     const selected=selection.has(p.id);data.set([dx,dy,dz,(s.isolate?selected:visible.has(p.system)||selected)?1:0],i*4);selectedData[i*4]=selected?255:0;
+     const selected=selection.has(p.id);data.set([dx,dy,dz,isDisplayed(p,selection,visible)?1:0],i*4);selectedData[i*4]=selected?255:0;
      markerPositions.set(data[i*4+3]>.5?[c.x+dx,c.y+dy,c.z+dz]:[10000,10000,10000],i*3);const mesh=pickers[i];if(mesh){mesh.position.set(dx,dy,dz);mesh.updateMatrix();mesh.updateMatrixWorld(true);}
     });partTexture.needsUpdate=true;selectionTexture.needsUpdate=true;markerGeometry.attributes.position.needsUpdate=true;lastState=s;lastExtent=amount;dirty=true;
    }
