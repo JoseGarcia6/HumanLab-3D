@@ -252,3 +252,17 @@
  .unified-lab-animation{height:275px}
 }
 @media(prefers-reduced-motion:reduce){.unified-detail-root *{scroll-behavior:auto}}
+
+
+/* Mobile review: don't squeeze organ cards or the 5-row score summary. */
+@media(max-width:680px){
+ .info-column{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+ .library-stats{display:grid;grid-template-columns:auto minmax(0,1fr);max-width:100%;width:100%;gap:5px 10px;align-items:center}
+ .library-stats strong{margin-left:0;font-size:16px}
+ .library-stats span{font-size:10px}
+ .viewer-head{height:auto;min-height:58px;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px}
+ .sex-switch{margin-left:auto}
+ .sex-switch button{min-height:36px;padding:8px 11px;font-size:11px}
+ .study-workspace-nav{margin:4px 0 16px}
+ .study-workspace-nav a{line-height:1.4}
+}
