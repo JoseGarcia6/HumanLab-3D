@@ -41,6 +41,7 @@ export default function AtlasExplorer() {
   const [query, setQuery] = useState("");
   const [chosen, setChosen] = useState<Concept | null>(null);
   const [showLayers, setShowLayers] = useState(false);
+  const [showNames, setShowNames] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -156,7 +157,7 @@ export default function AtlasExplorer() {
         <section className="hl-atlas-center" aria-label="Visualizador de anatomía humana tridimensional">
           <div className="hl-atlas-viewer">
             {atlas && (
-              <DetailedScene atlas={atlas}
+              <DetailedScene atlas={atlas} showNames={showNames}
                 state={{ ...state, inspectorOpen: Boolean(selected) }}
                 onSelect={choosePart} onProgress={setProgress}
                 onError={setError} />
@@ -176,6 +177,7 @@ export default function AtlasExplorer() {
           </div>
           <div className="hl-atlas-toolbar">
             <button type="button" className="hl-atlas-mobile-layers" onClick={() => setShowLayers((value) => !value)} aria-expanded={showLayers}>☰ Sistemas</button>
+            <button type="button" className={`hl-atlas-names-toggle ${showNames ? "active" : ""}`} onClick={() => setShowNames((value) => !value)} aria-pressed={showNames} title="Mostrar u ocultar etiquetas anatómicas sobre el cuerpo">{showNames ? "◉ Ocultar nombres" : "○ Mostrar nombres"}</button>
             <div className="hl-atlas-views">
               {([["three-quarter", "¾"], ["front", "Frente"], ["side", "Lado"], ["back", "Atrás"]] as [View, string][]).map(([view, title]) =>
                 <button key={view} type="button" className={state.view === view ? "active" : ""}
@@ -223,7 +225,8 @@ export default function AtlasExplorer() {
           </> : <div className="hl-atlas-no-selection">
             <span aria-hidden="true">◎</span>
             <h2>Explorá el cuerpo humano</h2>
-            <p>Elegí un sistema o buscá una estructura. Al tocar el modelo, vas a ver su nombre, sistema y ubicación en el conjunto anatómico.</p>
+            <p>Elegí un sistema o buscá una estructura. Al tocar el modelo, vas a ver su nombre y sistema en la ficha informativa.</p>
+            <p>Usá «Mostrar nombres» para identificar las estructuras principales sobre el cuerpo sin llenar la pantalla de etiquetas.</p>
             <p>Podés aislar una parte y separar las estructuras para observar cómo se relacionan.</p>
           </div>}
           <div className="hl-atlas-license">
