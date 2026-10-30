@@ -1,0 +1,49 @@
+name: Validar compilación de HumanLab 3D
+on:
+  push:
+    branches:
+      - feat/humanlab-anatomia-modelos-3d
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Comprobar Node
+        run: node --version && npm --version
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Compilar Next.js
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Probar plataforma unificada y carga de catálogos
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          set -euo pipefail
+          npm run start > /tmp/humanlab-next.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 35); do
+            if curl --max-time 4 -fsS http://127.0.0.1:3000/ -o /tmp/humanlab-home.html; then break; fi
+            sleep 1
+          done
+          test -s /tmp/humanlab-home.html
+          grep -q 'HumanLab 3D' /tmp/humanlab-home.html
+          grep -q 'Anatomía 3D' /tmp/humanlab-home.html
+          grep -q 'laboratorio-fisiologico' /tmp/humanlab-home.html
+          grep -q 'biblioteca-aprendizaje' /tmp/humanlab-home.html
+          curl --max-time 15 -fsS http://127.0.0.1:3000/atlas -o /tmp/humanlab-redirect.html
+          grep -q 'Abriendo HumanLab' /tmp/humanlab-redirect.html
+          curl --max-time 90 -fsS http://127.0.0.1:3000/api/atlas/atlas.json -o /tmp/humanlab-manifest-male.json
+          curl --max-time 90 -fsS http://127.0.0.1:3000/api/female-atlas/atlas.json -o /tmp/humanlab-manifest-female.json
+          node -e 'const fs=require("node:fs");for(const [file,sex] of [["/tmp/humanlab-manifest-male.json","male"],["/tmp/humanlab-manifest-female.json","female"]]){const a=JSON.parse(fs.readFileSync(file,"utf8"));if(!Array.isArray(a.parts)||a.parts.length<1000||!a.chunks?.length)throw Error("Invalid "+sex+" atlas");if(sex==="female"&&a.sex!=="female")throw Error("Wrong female atlas");console.log(sex+": "+a.parts.length+" anatomical parts, "+a.chunks.length+" model chunks")}'
