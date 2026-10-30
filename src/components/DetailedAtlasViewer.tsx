@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_VISIBLE,
   SYSTEMS,
@@ -96,7 +96,12 @@ function availableSystems(active:string,layers:Record<string,boolean>,female:boo
   if(female && layers.pregnancy===true)allowed.add("pregnancy");
   const focus=RELATED[active];
   if(focus?.length)return [...allowed].filter(id=>focus.includes(id));
-  return DEFAULT_VISIBLE.filter(id=>allowed.has(id)).concat(female&&layers.pregnancy===true?["pregnancy"]:[]);
+  const result: SystemId[]=DEFAULT_VISIBLE.filter(id=>allowed.has(id));
+  // Skin is a separate toggle: enable it only on explicit request so the
+  // organs remain visible on first load.
+  if(layers.integumentary===true)result.push("integumentary");
+  if(female&&layers.pregnancy===true)result.push("pregnancy");
+  return result;
 }
 
 function findConcept(atlas:Atlas,term:string):Concept|undefined{
@@ -118,6 +123,7 @@ export default function DetailedAtlasViewer({sex,activeSystem,selectedStructure,
   const [maleAtlas,setMaleAtlas]=useState<Atlas|null>(null);
   const [femaleAtlas,setFemaleAtlas]=useState<Atlas|null>(null);
   const [attempt,setAttempt]=useState(0);
+  const lastLocalLegacySelect=useRef<string|null>(null);
   const atlas=female?femaleAtlas:maleAtlas;
   const [error,setError]=useState("");
   const [progress,setProgress]=useState(0);
@@ -190,7 +196,7 @@ export default function DetailedAtlasViewer({sex,activeSystem,selectedStructure,
     const legacy=Object.entries(LEGACY_QUERIES).find(([,aliases])=>aliases.some(alias=>
       name.includes(normalizedTerm(alias))
     ))?.[0];
-    if(legacy)onSelectLegacy(legacy);
+    if(legacy){lastLocalLegacySelect.current=legacy;onSelectLegacy(legacy);}
   }
 
   function pickConcept(concept:Concept){
@@ -212,6 +218,10 @@ export default function DetailedAtlasViewer({sex,activeSystem,selectedStructure,
     if(match){setSelectedIds(match.elements);setTerm(anatomicalNameEs(match.name));setShowResults(false);}
   }
   useEffect(()=>{
+    if(lastLocalLegacySelect.current===selectedStructure){
+      lastLocalLegacySelect.current=null;
+      return;
+    }
     if(!atlas || !selectedStructure)return;
     // Study navigation changes the legacy selection. Also locate it in the
     // detailed atlas so the 3D view and educational card point to the same topic.
