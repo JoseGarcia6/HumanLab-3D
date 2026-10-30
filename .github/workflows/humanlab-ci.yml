@@ -19,7 +19,7 @@ jobs:
       - name: Comprobar Node
         run: node --version && npm --version
       - name: Instalar dependencias
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
       - name: Compilar Next.js
         env:
           NEXT_TELEMETRY_DISABLED: "1"
