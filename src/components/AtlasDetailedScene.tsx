@@ -42,19 +42,29 @@ const nameInSpanish=(name:string)=>TRANSLATED_NAMES.get(name)??anatomicalNameEs(
  */
 function redundantFemaleOcularPart(part:Part):boolean {
  if(!part.id.startsWith('BP3D_') || part.system!=='sensory')return false;
- const name=part.name.toLowerCase();
- return /(?:anterior chamber of .* eyeball|corona ciliaris|optic part of .* retina|tarsal plate|vitreous body|lacrimal canaliculus|lacrimal gland|lacrimal lake|nasolacrimal duct|lacrimal sac|common tendinous ring)/.test(name);
+ // The BP3D eye set is 2.2 cm below the HuBMAP eye set. Keep the HuBMAP set
+ // and omit the superimposed BP3D eye parts in the default cleaned view.
+ const centerY=(part.bounds[0][1]+part.bounds[1][1])*.5;
+ const centerX=(part.bounds[0][0]+part.bounds[1][0])*.5;
+ return centerY>1.515 && centerY<1.59 && Math.abs(centerX)<.08;
 }
-/**
- * In the combined female reference, these slender knee pieces can appear
- * detached from the limb at overview scale. Keep them searchable/isolatable,
- * but omit them in the default educational overview.
- */
 function isolatedFemaleKneeOverlay(part:Part):boolean {
- return /^VH_F_(?:anterolateral_ligament_of_knee|tendon_of_quadriceps_femoris)_[RL]$/.test(part.id);
+ if(!part.id.startsWith('VH_F_'))return false;
+ const midY=(part.bounds[0][1]+part.bounds[1][1])*.5;
+ // Fine knee ligament overlays from an independent atlas float beside the
+ // BodyParts3D legs and are better studied in isolation rather than all at once.
+ return midY>.37 && midY<.53 &&
+    /(?:knee|meniscus|quadriceps_femoris|patellar_ligament|cruciate)/i.test(part.id);
 }
 function cleanFemaleArtifact(part:Part):boolean {
  return redundantFemaleOcularPart(part)||isolatedFemaleKneeOverlay(part);
+}
+function eyeAlignment(part:Part,center:T.Vector3,clean:boolean,sex:string|undefined):T.Vector3 {
+ if(!clean || sex!=='female' || part.system!=='sensory'||!part.id.startsWith('VH_F_'))return new T.Vector3();
+ if(center.y<1.535||center.y>1.605||Math.abs(center.x)>.075||center.z<-.05||center.z>.07)return new T.Vector3();
+ // Female Reference Atlas ocular centers y≈1.560, z≈0.018; the original
+ // BodyParts3D bony orbits used here center around y≈1.537, z≈-0.005.
+ return new T.Vector3(center.x<0?.011:-.004,-.023,-.023);
 }
 interface Props {atlas:Atlas;state:SceneState;showNames:boolean;cleanView:boolean;onSelect:(id:string)=>void;onProgress:(n:number)=>void;onError:(s:string)=>void}
 export default function AnatomyScene({atlas,state,showNames,cleanView,onSelect,onProgress,onError}:Props){
@@ -222,7 +232,9 @@ export default function AnatomyScene({atlas,state,showNames,cleanView,onSelect,o
      const c=centers[i],destination=offsets[i];let dx=0,dy=0,dz=0;
      if(amount<=.45){const t=amount/.45;const group=SYSTEMS.findIndex(sys=>sys.id===p.system);const angle=group/SYSTEMS.length*Math.PI*2;dx=Math.sin(angle)*t*.48;dy=(c.y-.85)*t*.28;dz=Math.cos(angle)*t*.48;}
      else {const t=(amount-.45)/.55,group=SYSTEMS.findIndex(sys=>sys.id===p.system),angle=group/SYSTEMS.length*Math.PI*2;dx=T.MathUtils.lerp(Math.sin(angle)*.48,destination.x-c.x,t);dy=T.MathUtils.lerp((c.y-.85)*.28,destination.y-c.y,t);dz=T.MathUtils.lerp(Math.cos(angle)*.48,-c.z,t);}
-     const selected=selection.has(p.id);data.set([dx,dy,dz,isDisplayed(p,selection,visible)?1:0],i*4);selectedData[i*4]=selected?255:0;
+     const selected=selection.has(p.id);const alignment=eyeAlignment(p,c,cleanRef.current,atlas.sex);
+     dx+=alignment.x;dy+=alignment.y;dz+=alignment.z;
+     data.set([dx,dy,dz,isDisplayed(p,selection,visible)?1:0],i*4);selectedData[i*4]=selected?255:0;
      markerPositions.set(data[i*4+3]>.5?[c.x+dx,c.y+dy,c.z+dz]:[10000,10000,10000],i*3);const mesh=pickers[i];if(mesh){mesh.position.set(dx,dy,dz);mesh.updateMatrix();mesh.updateMatrixWorld(true);}
     });partTexture.needsUpdate=true;selectionTexture.needsUpdate=true;markerGeometry.attributes.position.needsUpdate=true;lastState=s;lastExtent=amount;dirty=true;
    }
