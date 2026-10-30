@@ -100,6 +100,12 @@ export default function Home(){
  const system=systems.find(s=>s.id===activeSystem)??systems[0]; const info=organInfo[selected]??organInfo.heart; const selectedStructure=structures.find(item=>item.id===selected);
  const filteredStructures=useMemo(()=>{const q=query.trim().toLocaleLowerCase("es");return structures.filter(item=>(q?true:(activeSystem==="all"||item.system===activeSystem))&&(!q||[item.name,item.description,...item.tags].some(value=>value.toLocaleLowerCase("es").includes(q))))},[activeSystem,query]);
  const chooseStructure=(item:Structure)=>{setSelected(item.id);setActiveSystem(item.system)};
+ const chooseBody=(body:"f"|"m")=>{
+   if(body===sex)return;
+   setSex(body);setActiveSystem("all");setSelected("heart");setQuery("");
+   setVisibleLayers({circulatory:false,respiratory:true,digestive:true,skeletal:true,muscular:true,nervous:false,urinary:true,integumentary:false});
+ };
+
  useEffect(()=>{
   const followHash=()=>{
    const hash=window.location.hash;
@@ -119,7 +125,7 @@ export default function Home(){
    <div className="main-structure-list">{filteredStructures.map(item=><button key={item.id} className={`main-structure ${selected===item.id?"selected":""}`} onClick={()=>chooseStructure(item)}><span className="structure-dot"/><span>{item.name}</span><small>↗</small></button>)}{filteredStructures.length===0&&<p className="main-search-empty">No hay coincidencias. Probá otro término.</p>}</div>
    <div className="sidebar-bottom"><div className="status-dot"/> <span>Modo educativo</span><small>PREVIEW 0.1</small></div>
   </aside>
-  <section className="main-area"><header className="topbar"><div><div className="eyebrow">LABORATORIO DIGITAL <span>•</span> ANATOMÍA HUMANA</div><h1>{mode==="anatomy"?"HumanLab 3D — Plataforma educativa":"Laboratorio fisiológico"}</h1></div><div className="top-actions"><ExplorationGuide /><div className="online-pill"><span/> Motor 3D activo</div><button className="profile-button" aria-label="Perfil">JG</button></div></header>
+  <section className="main-area"><header className="topbar"><div><div className="eyebrow">LABORATORIO DIGITAL <span>•</span> ANATOMÍA HUMANA</div><h1>{mode==="anatomy"?"HumanLab 3D — Plataforma educativa":"Laboratorio fisiológico"}</h1></div><div className="top-actions"><ExplorationGuide /><div className="online-pill"><span/> Motor 3D activo</div><a className="profile-button" href="#progreso-estudio" aria-label="Ver resultados del aprendizaje" title="Ver progreso y resultados">◎</a></div></header>
    <nav className="study-workspace-nav" aria-label="Secciones de estudio HumanLab 3D">
     <a href="#atlas-visualizador">◉ Anatomía 3D · Hombre / Mujer</a>
     <a href="#diccionario">▤ Diccionario</a>
@@ -128,7 +134,7 @@ export default function Home(){
     <a href="#progreso-estudio">◎ Progreso</a>
     <a href="#laboratorio-fisiologico">♥ Laboratorio cardíaco y pulmonar</a>
    </nav>
-   <div className="workspace"><section className="viewer-card" id="atlas-visualizador"><div className="viewer-head"><div><span className="live-dot"/> VISUALIZADOR 3D <span className="muted">/ {system.name.toUpperCase()}</span></div><div className="sex-switch"><button className={sex==="m"?"selected":""} onClick={()=>setSex("m")}>Masculino</button><button className={sex==="f"?"selected":""} onClick={()=>setSex("f")}>Femenino</button></div></div>
+   <div className="workspace"><section className="viewer-card" id="atlas-visualizador"><div className="viewer-head"><div><span className="live-dot"/> VISUALIZADOR 3D <span className="muted">/ {system.name.toUpperCase()}</span></div><div className="sex-switch"><button className={sex==="m"?"selected":""} onClick={()=>chooseBody("m")}>Masculino</button><button className={sex==="f"?"selected":""} onClick={()=>chooseBody("f")}>Femenino</button></div></div>
     <DetailedAtlasViewer
       sex={sex} activeSystem={activeSystem} selectedStructure={selected}
       onSelectLegacy={id=>{
