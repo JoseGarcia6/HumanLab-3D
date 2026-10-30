@@ -125,3 +125,14 @@
 .hl-atlas-model-note button:hover{background:#21697a}
 .hl-atlas-model-note button:focus-visible{outline:2px solid #7de9db;outline-offset:2px}
 @media(max-width:650px){.hl-atlas-model-note button{width:100%}}
+
+/* The classic 2fda68f controls remain; additional viewer actions wrap on small screens. */
+.hl-atlas-clean-toggle{background:#173e49!important;border-color:#306e79!important;color:#d3f5f2!important}
+.hl-atlas-clean-toggle.active{background:#156568!important;border-color:#3bb2ab!important;color:#f6ffff!important}
+.hl-atlas-fullbody{background:#16425d!important;border-color:#477e9a!important;color:#e6f2ff!important}
+.hl-atlas-clean-toggle:focus-visible,.hl-atlas-fullbody:focus-visible{outline:2px solid #61d5ce;outline-offset:2px}
+@media(max-width:650px){
+ .hl-atlas-toolbar{display:flex;flex-wrap:wrap}
+ .hl-atlas-clean-toggle,.hl-atlas-fullbody{flex:1 1 calc(50% - 6px);min-width:130px}
+ .hl-atlas-views{order:10}
+}
