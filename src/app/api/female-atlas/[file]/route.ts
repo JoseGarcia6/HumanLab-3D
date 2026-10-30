@@ -40,6 +40,22 @@ export async function GET(
       if (manifest.sex !== "female" || !Array.isArray(manifest.chunks)) {
         return NextResponse.json({ error: "Catálogo incompatible" }, { status: 502 });
       }
+      // Female Atlas uses BodyParts3D assets with a few source classification
+      // errors: fibularis, tibialis and subscapularis are muscles, not bones.
+      // Correct the educational system grouping without changing geometry.
+      manifest.parts = manifest.parts.map((part: {
+        id: string; name: string; system: string;
+      }) => {
+        if (part.id.startsWith("BP3D_") && part.system === "skeletal") {
+          if (/\\b(fibularis|tibialis|subscapularis|levator scapulae)\\b/i.test(part.name)) {
+            return { ...part, system: "muscular" };
+          }
+          if (/\\biliotibial tract\\b/i.test(part.name)) {
+            return { ...part, system: "connective" };
+          }
+        }
+        return part;
+      });
       manifest.chunks = manifest.chunks.map((chunk: { url: string; gzip?: string }) => ({
         ...chunk,
         url: "/api/female-atlas/" + chunk.url.split("/").pop(),
