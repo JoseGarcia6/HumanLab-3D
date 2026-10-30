@@ -127,7 +127,7 @@ export default function AtlasExplorer() {
     if(value===body)return;
     setBody(value);setQuery("");setShowLayers(false);setChosen(null);
     setFemaleSelected("");setError("");setProgress(0);
-    const systems=value==="female"?DEFAULT_VISIBLE.filter(item=>item!=="reproductive").concat("reproductive"):DEFAULT_VISIBLE;
+    const systems=[...DEFAULT_VISIBLE];
     setState(previous=>({
       ...originalState,visible:[...systems],selected:[],reset:previous.reset+1
     }));
