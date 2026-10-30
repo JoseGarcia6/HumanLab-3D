@@ -117,3 +117,11 @@
 .hl-atlas-female-relations strong{display:block;color:#ecf5ff;margin-bottom:5px}
 .hl-atlas-female-relations p{margin:0}
 @media(max-width:650px){.hl-atlas-body-switch{padding:12px;flex-direction:column;align-items:stretch;gap:10px}.hl-atlas-body-buttons{width:100%}.hl-atlas-body-buttons button{flex:1}.hl-atlas-model-note{font-size:11px;padding:10px 12px}.hl-atlas-female-label{font-size:10px;max-width:93px;padding:6px 7px}}
+
+/* The alternate lightweight female viewer is optional and never disguises itself as the detailed model. */
+.hl-atlas-model-note{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.hl-atlas-model-note span{flex:1;min-width:200px}
+.hl-atlas-model-note button{border:1px solid #57cfc6;border-radius:9px;padding:9px 14px;min-height:42px;background:#164e60;color:#e9fffd;font-family:inherit;font-size:12px;font-weight:600;line-height:1.3;cursor:pointer}
+.hl-atlas-model-note button:hover{background:#21697a}
+.hl-atlas-model-note button:focus-visible{outline:2px solid #7de9db;outline-offset:2px}
+@media(max-width:650px){.hl-atlas-model-note button{width:100%}}
