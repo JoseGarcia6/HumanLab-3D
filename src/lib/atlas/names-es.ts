@@ -109,9 +109,6 @@ const EXACT: Record<string,string> = {
   "triceps brachii":"Tríceps braquial",
   "pectoralis major":"Pectoral mayor",
   "rectus abdominis":"Recto del abdomen",
-  "uterus":"Útero",
-  "right ovary":"Ovario derecho",
-  "left ovary":"Ovario izquierdo",
 };
 const PHRASES = ([
   ["uterine tube","trompa uterina"],
