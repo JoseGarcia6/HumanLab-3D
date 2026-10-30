@@ -1,0 +1,26 @@
+name: Validar compilación de HumanLab 3D
+on:
+  push:
+    branches:
+      - feat/humanlab-anatomia-modelos-3d
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Comprobar Node
+        run: node --version && npm --version
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+      - name: Compilar Next.js
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
