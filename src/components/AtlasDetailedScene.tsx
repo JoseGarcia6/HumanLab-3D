@@ -45,6 +45,17 @@ function redundantFemaleOcularPart(part:Part):boolean {
  const name=part.name.toLowerCase();
  return /(?:anterior chamber of .* eyeball|corona ciliaris|optic part of .* retina|tarsal plate|vitreous body|lacrimal canaliculus|lacrimal gland|lacrimal lake|nasolacrimal duct|lacrimal sac|common tendinous ring)/.test(name);
 }
+/**
+ * In the combined female reference, these slender knee pieces can appear
+ * detached from the limb at overview scale. Keep them searchable/isolatable,
+ * but omit them in the default educational overview.
+ */
+function isolatedFemaleKneeOverlay(part:Part):boolean {
+ return /^VH_F_(?:anterolateral_ligament_of_knee|tendon_of_quadriceps_femoris)_[RL]$/.test(part.id);
+}
+function cleanFemaleArtifact(part:Part):boolean {
+ return redundantFemaleOcularPart(part)||isolatedFemaleKneeOverlay(part);
+}
 interface Props {atlas:Atlas;state:SceneState;showNames:boolean;cleanView:boolean;onSelect:(id:string)=>void;onProgress:(n:number)=>void;onError:(s:string)=>void}
 export default function AnatomyScene({atlas,state,showNames,cleanView,onSelect,onProgress,onError}:Props){
  const host=useRef<HTMLDivElement>(null),latest=useRef(state),select=useRef(onSelect),namesRef=useRef(showNames),cleanRef=useRef(cleanView);
@@ -197,7 +208,7 @@ export default function AnatomyScene({atlas,state,showNames,cleanView,onSelect,o
    const isDisplayed=(p:Part,selection:Set<string>,visible:Set<string>):boolean=>{
     const chosen=selection.has(p.id);
     return (s.isolate?chosen:chosen||visible.has(p.system))&&
-      (chosen||!cleanRef.current||atlas.sex!=='female'||!redundantFemaleOcularPart(p));
+      (chosen||!cleanRef.current||atlas.sex!=='female'||!cleanFemaleArtifact(p));
    };
    const moving=Math.abs(amount-s.explode)>.0001;
    if(moving){amount=T.MathUtils.damp(amount,s.explode,8,dt);dirty=true;}
