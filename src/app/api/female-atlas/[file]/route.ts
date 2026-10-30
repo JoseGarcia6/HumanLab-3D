@@ -19,7 +19,7 @@ export async function GET(
   { params }: { params: Promise<{ file: string }> }
 ) {
   const { file } = await params;
-  if (file !== "atlas.json" && !/^female-(?:[0-9]|1[0-9]|2[01])\\.bin(?:\\.gz)?$/.test(file)) {
+  if (file !== "atlas.json" && !/^female-(?:[0-9]|1[0-9]|2[01])\.bin(?:\.gz)?$/.test(file)) {
     return NextResponse.json({ error: "Archivo no permitido" }, { status: 404 });
   }
 
