@@ -1,12 +1,16 @@
-import type { Metadata } from "next";
-import AtlasExplorer from "@/components/AtlasExplorer";
-import "./atlas.css";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Atlas anatómico detallado 3D | HumanLab 3D",
-  description: "Explorá 2,234 piezas anatómicas interactivas de BodyParts3D, buscá estructuras y aislá sistemas del cuerpo humano.",
-};
+import { useEffect } from "react";
 
-export default function AtlasPage() {
-  return <AtlasExplorer />;
+/** Compatibility link for older atlas bookmarks: HumanLab now has one app. */
+export default function AtlasLegacyRedirect(){
+  useEffect(()=>{
+    const hash=window.location.hash||"#atlas-visualizador";
+    window.location.replace("/"+hash);
+  },[]);
+  return (
+    <main style={{minHeight:"100dvh",display:"grid",placeItems:"center",background:"#080e18",color:"#edf3fb",padding:24}}>
+      <p>Abriendo HumanLab 3D — Plataforma educativa…</p>
+    </main>
+  );
 }
