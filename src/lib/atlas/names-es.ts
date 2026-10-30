@@ -78,7 +78,7 @@ const EXACT: Record<string,string> = {
   "right ovary":"Ovario derecho",
   "left ovary":"Ovario izquierdo",
 };
-const PHRASES: Array<[string,string]> = [
+const PHRASES = ([
   ["anterior interventricular branch","rama interventricular anterior"],
   ["posterior interventricular branch","rama interventricular posterior"],
   ["superior vena cava","vena cava superior"],
@@ -332,7 +332,7 @@ const PHRASES: Array<[string,string]> = [
   ["to","a"],
   ["from","desde"],
   ["and","y"],
-].sort((a,b)=>b[0].length-a[0].length);
+] as Array<[string,string]>).sort((a,b)=>b[0].length-a[0].length);
 
 export function normalizedTerm(value:string):string {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim();
