@@ -41,6 +41,7 @@ export default function AtlasExplorer() {
   const [showNames, setShowNames] = useState(true);
   const [body, setBody] = useState<"male"|"female">("male");
   const [femaleLite, setFemaleLite] = useState(false);
+  const [cleanFemaleView, setCleanFemaleView] = useState(true);
   const [femaleVisible, setFemaleVisible] = useState<FemaleSystemId[]>([...FEMALE_VISIBLE_DEFAULT]);
   const [femaleSelected, setFemaleSelected] = useState("");
   const [femaleReset, setFemaleReset] = useState(0);
@@ -153,6 +154,11 @@ export default function AtlasExplorer() {
       visible: prev.visible.includes(id) ? prev.visible.filter((item) => item !== id) : [...prev.visible, id],
     }));
   }
+  function showWholeBody() {
+    if(!detailed){reset();return;}
+    setChosen(null);
+    setState(previous=>({...previous,explode:0,view:"three-quarter",rotate:false,isolate:false,selected:[],reset:previous.reset+1}));
+  }
   function reset() {
     if(body==="female"&&femaleLite){
       setFemaleVisible([...FEMALE_VISIBLE_DEFAULT]);
@@ -196,7 +202,7 @@ export default function AtlasExplorer() {
       {body==="female"&&<div className="hl-atlas-model-note" role="note">
         <span>{femaleLite?
           "Modo ligero: representación femenina esquemática con órganos educativos.":
-          "Modelo femenino detallado: órganos del Human Reference Atlas y otros sistemas adaptados desde BodyParts3D. Algunas proporciones son reconstrucciones digitales."}</span>
+          "Modelo femenino detallado: estructuras de Human Reference Atlas y BodyParts3D adaptadas digitalmente. La vista limpia oculta las piezas oculares duplicadas; podés verlas en el catálogo original."}</span>
         <button type="button" onClick={()=>switchFemaleMode(!femaleLite)}>
           {femaleLite?"Abrir atlas femenino detallado":"Cambiar a modo ligero"}
         </button>
@@ -246,7 +252,7 @@ export default function AtlasExplorer() {
               showNames={showNames} rotate={state.rotate} onSelect={chooseFemale}
             />}
             {detailed&&currentAtlas && (
-              <DetailedScene key={body+"-"+attempt} atlas={currentAtlas} showNames={showNames}
+              <DetailedScene key={body+"-"+attempt} atlas={currentAtlas} showNames={showNames} cleanView={body==="female"&&cleanFemaleView}
                 state={{ ...state, inspectorOpen: Boolean(selected) }}
                 onSelect={choosePart} onProgress={setProgress}
                 onError={setError} />
@@ -267,6 +273,13 @@ export default function AtlasExplorer() {
           <div className="hl-atlas-toolbar">
             <button type="button" className="hl-atlas-mobile-layers" onClick={() => setShowLayers((value) => !value)} aria-expanded={showLayers}>☰ Sistemas</button>
             <button type="button" className={`hl-atlas-names-toggle ${showNames ? "active" : ""}`} onClick={() => setShowNames((value) => !value)} aria-pressed={showNames} title="Mostrar u ocultar etiquetas anatómicas sobre el cuerpo">{showNames ? "◉ Ocultar nombres" : "○ Mostrar nombres"}</button>
+            {body==="female"&&!femaleLite&&
+              <button type="button" className={`hl-atlas-clean-toggle ${cleanFemaleView?"active":""}`}
+                aria-pressed={cleanFemaleView}
+                title="Vista limpia oculta los componentes oculares superpuestos de los dos atlas de origen"
+                onClick={()=>setCleanFemaleView(value=>!value)}>
+                {cleanFemaleView?"✓ Vista limpia":"Ver todas las piezas"}
+              </button>}
             {detailed&&<div className="hl-atlas-views">
               {([["three-quarter", "¾"], ["front", "Frente"], ["side", "Lado"], ["back", "Atrás"]] as [View, string][]).map(([view, title]) =>
                 <button key={view} type="button" className={state.view === view ? "active" : ""}
@@ -276,6 +289,7 @@ export default function AtlasExplorer() {
             </div>}
             <button type="button" onClick={() => setState((prev) => ({ ...prev, rotate: !prev.rotate }))}
               aria-pressed={state.rotate} disabled={detailed&&state.explode > 0.4}>{state.rotate ? "Ⅱ Pausar" : "↻ Girar"}</button>
+            {detailed&&<button type="button" className="hl-atlas-fullbody" onClick={showWholeBody} title="Volver a encuadrar el cuerpo completo manteniendo los sistemas seleccionados">Ver cuerpo completo</button>}
             <button type="button" onClick={reset}>Restablecer</button>
           </div>
           {detailed&&<div className="hl-atlas-explode">
