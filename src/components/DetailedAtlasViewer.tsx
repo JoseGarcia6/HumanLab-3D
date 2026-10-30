@@ -86,14 +86,13 @@ function availableSystems(active:string,layers:Record<string,boolean>,female:boo
     circulatory:["cardiac","arterial","venous"],respiratory:["respiratory"],
     digestive:["digestive"],nervous:["nervous","sensory"],
     urinary:["urinary"],integumentary:["integumentary"],
+    reproductive:["reproductive"],lymphatic:["lymphatic"],
+    endocrine:["endocrine"],pregnancy:["pregnancy"],
   };
   for(const [key,ids] of Object.entries(layerGroups)){
-    if(layers[key]!==false)for(const id of ids)allowed.add(id);
+    if((key==="pregnancy"&&!female)||layers[key]===false)continue;
+    for(const id of ids)allowed.add(id);
   }
-  // Reproductive, lymphatic and endocrine structures are educational layers too.
-  for(const id of ["reproductive","lymphatic","endocrine"] as SystemId[])allowed.add(id);
-  if(female && layers.reproductive!==false)allowed.add("reproductive");
-  if(female && layers.pregnancy===true)allowed.add("pregnancy");
   const focus=RELATED[active];
   if(focus?.length)return [...allowed].filter(id=>focus.includes(id));
   const result: SystemId[]=DEFAULT_VISIBLE.filter(id=>allowed.has(id));
