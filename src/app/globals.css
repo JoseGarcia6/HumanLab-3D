@@ -273,3 +273,5 @@
 .profile-button:hover,.profile-button:focus-visible{border-color:#6c97d8;background:#243d60;color:#fff}
 .unified-model-source a{color:#a9c3ff;text-underline-offset:3px}
 .unified-model-source a:hover{color:#e7efff}
+
+.unified-lab-placeholder{height:100%;display:grid;place-items:center;padding:20px;color:#b8cdea;font-size:12px;line-height:1.6;text-align:center;max-width:360px;margin:auto}
