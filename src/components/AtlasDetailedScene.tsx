@@ -9,6 +9,7 @@ import {createExplosionLayout} from '@/lib/atlas/explosion-layout';
 import {decodeModelResponse} from '@/lib/atlas/model-download';
 import {PointerTap} from '@/lib/atlas/pointer-tap';
 import {SYSTEMS,type Atlas,type SceneState} from '@/lib/atlas/anatomy';
+import {anatomicalNameEs} from '@/lib/atlas/names-es';
 // Recognizable structures available in BodyParts3D 4.0. A named subset keeps mobile labels readable.
 const KEY_LABELS: ReadonlyArray<readonly [string,string]> = [
  ['Frontal bone','Hueso frontal'],['Mandible','Mandíbula'],['Cerebellum','Cerebelo'],
@@ -21,6 +22,7 @@ const KEY_LABELS: ReadonlyArray<readonly [string,string]> = [
  ['Left main bronchus','Bronquio izquierdo'],['Midbrain','Mesencéfalo'],
 ];
 const TRANSLATED_NAMES=new Map(KEY_LABELS);
+const nameInSpanish=(name:string)=>TRANSLATED_NAMES.get(name)??anatomicalNameEs(name);
 interface Props {atlas:Atlas;state:SceneState;showNames:boolean;onSelect:(id:string)=>void;onProgress:(n:number)=>void;onError:(s:string)=>void}
 export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,onError}:Props){
  const host=useRef<HTMLDivElement>(null),latest=useRef(state),select=useRef(onSelect),namesRef=useRef(showNames);
@@ -68,7 +70,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
    if(!ready||!namesRef.current){labelLayer.replaceChildren();return;}
    const mobile=el.clientWidth<650,budget=mobile?7:12;
    const chosen=s.selected.length?atlas.parts.findIndex(p=>p.id===s.selected[0]):-1;
-   const candidates=[...(chosen>=0?[{index:chosen,title:TRANSLATED_NAMES.get(atlas.parts[chosen].name)??atlas.parts[chosen].name,selected:true}]:[]),
+   const candidates=[...(chosen>=0?[{index:chosen,title:nameInSpanish(atlas.parts[chosen].name),selected:true}]:[]),
     ...featured.map(item=>({...item,selected:false}))];
    const occupied:{x:number;y:number}[]=[],active:HTMLButtonElement[]=[],used=new Set<number>();
    for(const item of candidates){
@@ -154,7 +156,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
   const resize=()=>{layoutKey='';lastState=null;renderer.setPixelRatio(Math.min(devicePixelRatio,el.clientWidth<768||el.clientHeight<600?1.5:2));camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();renderer.setSize(el.clientWidth,el.clientHeight);fit(latest.current.view,amount);};const observer=new ResizeObserver(resize);observer.observe(el);
   const raycaster=new T.Raycaster(),pointer=new T.Vector2(),tap=new PointerTap(),worldBox=new T.Box3(),hitPoint=new T.Vector3();
   const down=(e:PointerEvent)=>{hover.hidden=true;tap.down(e.pointerId,e.clientX,e.clientY,e.pointerType==='touch'?12:5);};
-  const move=(e:PointerEvent)=>{tap.move(e.pointerId,e.clientX,e.clientY);if(e.buttons||amount<.5||e.pointerType==='touch'){hover.hidden=true;return;}const rect=el.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,index=findTarget(x,y,12);hover.hidden=index<0;renderer.domElement.style.cursor=index<0?'grab':'pointer';if(index>=0){hover.textContent=TRANSLATED_NAMES.get(atlas.parts[index].name)??atlas.parts[index].name;hover.style.left=`${Math.max(8,Math.min(x+14,el.clientWidth-260))}px`;hover.style.top=`${Math.max(8,Math.min(y+18,el.clientHeight-55))}px`;}};
+  const move=(e:PointerEvent)=>{tap.move(e.pointerId,e.clientX,e.clientY);if(e.buttons||amount<.5||e.pointerType==='touch'){hover.hidden=true;return;}const rect=el.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,index=findTarget(x,y,12);hover.hidden=index<0;renderer.domElement.style.cursor=index<0?'grab':'pointer';if(index>=0){hover.textContent=nameInSpanish(atlas.parts[index].name);hover.style.left=`${Math.max(8,Math.min(x+14,el.clientWidth-260))}px`;hover.style.top=`${Math.max(8,Math.min(y+18,el.clientHeight-55))}px`;}};
   const cancel=(e:PointerEvent)=>tap.cancel(e.pointerId);
   const up=(e:PointerEvent)=>{
    const validTap=tap.up(e.pointerId,e.clientX,e.clientY);if(!validTap||!ready)return;const rect=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);
