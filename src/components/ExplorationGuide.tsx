@@ -3,10 +3,11 @@
 import { useState } from "react";
 
 const steps = [
-  { title: "1. Elegí un sistema", description: "Usá la lista de sistemas para centrar la exploración en una parte del cuerpo." },
-  { title: "2. Buscá una estructura", description: "Escribí un nombre, como corazón o pulmones, en el buscador. También podés elegirlo de la lista." },
-  { title: "3. Explorá el modelo", description: "Arrastrá para girar y usá la rueda del ratón o el gesto de pellizcar para acercar y alejar." },
-  { title: "4. Leé y experimentá", description: "Consultá la ficha de la estructura y probá las variables del laboratorio. Sus valores son ilustrativos, no mediciones médicas." },
+  { title: "1. Elegí Hombre o Mujer", description: "Los dos cuerpos detallados están integrados en Anatomía 3D. Podés cambiar de modelo sin salir de HumanLab." },
+  { title: "2. Explorá sistemas y órganos", description: "Seleccioná un sistema, activá u ocultá capas, buscá estructuras por su nombre en español y tocá el modelo para ver información." },
+  { title: "3. Girá y observá", description: "Arrastrá para girar; en el teléfono, pellizcá para acercar. Usá Vista limpia si las capas del atlas femenino se superponen." },
+  { title: "4. Simulá corazón y pulmones", description: "En Laboratorio fisiológico modificá las frecuencias cardíaca y respiratoria, compará reposo y actividad, pausá o reanudá las animaciones." },
+  { title: "5. Estudiá y evaluá tu progreso", description: "Consultá el diccionario, respondé cuestionarios y repasá tus errores. La puntuación se guarda localmente en este navegador." },
 ];
 
 export function ExplorationGuide() {
