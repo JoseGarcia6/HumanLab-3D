@@ -266,3 +266,10 @@
  .study-workspace-nav{margin:4px 0 16px}
  .study-workspace-nav a{line-height:1.4}
 }
+
+
+/* The progress shortcut is a real link, not an inert profile control. */
+.profile-button{display:grid;place-items:center;text-decoration:none}
+.profile-button:hover,.profile-button:focus-visible{border-color:#6c97d8;background:#243d60;color:#fff}
+.unified-model-source a{color:#a9c3ff;text-underline-offset:3px}
+.unified-model-source a:hover{color:#e7efff}
