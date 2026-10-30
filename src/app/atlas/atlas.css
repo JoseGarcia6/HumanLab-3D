@@ -84,3 +84,14 @@
 @media(max-width:960px){.hl-atlas-layout{grid-template-columns:minmax(185px,230px) minmax(0,1fr);grid-template-areas:"left center" "left right"}.hl-atlas-sidebar{grid-area:left}.hl-atlas-center{grid-area:center}.hl-atlas-inspector{grid-area:right}.hl-atlas-viewer{height:520px;min-height:0}.hl-atlas-systemlist{max-height:690px}}
 @media(max-width:650px){.hl-atlas{padding:16px 10px 26px}.hl-atlas-header{padding:0 5px;align-items:flex-start}.hl-atlas-header h1{font-size:29px}.hl-atlas-count{display:none}.hl-atlas-header p{font-size:12px}.hl-atlas-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"center" "left" "right"}.hl-atlas-sidebar{display:none}.hl-atlas-sidebar.hl-atlas-sidebar-open{display:block}.hl-atlas-center{padding:8px}.hl-atlas-viewer{height:clamp(450px,68dvh,650px)}.hl-atlas-mobile-layers{display:block}.hl-atlas-toolbar{gap:5px}.hl-atlas-toolbar button{min-height:43px}.hl-atlas-views{order:2;width:100%;flex-basis:100%;justify-content:space-between}.hl-atlas-views button{flex:1}.hl-atlas-hint{bottom:8px;font-size:10px}.hl-atlas-inspector{padding:18px}.hl-atlas-systemlist{max-height:380px}}
 @media(prefers-reduced-motion:reduce){.hl-atlas *{scroll-behavior:auto}}
+
+/* Anatomical name chips follow projected 3D positions and remain usable by touch. */
+.hl-atlas-label-layer{position:absolute;inset:0;z-index:3;overflow:hidden;pointer-events:none}
+.hl-atlas-part-label{position:absolute;transform:translate(-50%,-50%);z-index:1;max-width:160px;padding:7px 10px;border:1px solid #abc7d2;border-radius:10px;background:#fffffff0;color:#173246;font-family:inherit;font-weight:600;font-size:11.5px;line-height:1.25;text-align:center;box-shadow:0 3px 12px #112a3c26;pointer-events:auto;cursor:pointer;overflow-wrap:break-word;transition:background .15s,border-color .15s}
+.hl-atlas-part-label::after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;left:calc(50% - 3px);bottom:-11px;background:#1b938d;box-shadow:0 0 0 3px #ffffffc9}
+.hl-atlas-part-label:hover,.hl-atlas-part-label:focus-visible{background:#e4fffb;border-color:#0a9b91;outline:2px solid #168e91;outline-offset:2px}
+.hl-atlas-part-label.selected{z-index:2;color:white;background:#126d69;border-color:#0d817a;box-shadow:0 5px 18px #0b5d5e59}
+.hl-atlas-part-label.selected::after{background:#126d69}
+.hl-atlas-names-toggle.active{background:#175d63;border-color:#2da8a0;color:#e6fffc}
+.hl-atlas-names-toggle:focus-visible{outline:2px solid #80e1db;outline-offset:2px}
+@media(max-width:650px){.hl-atlas-part-label{max-width:112px;padding:6px 7px;font-size:10.5px;line-height:1.2}.hl-atlas-names-toggle{flex:1;min-width:140px}.hl-atlas-toolbar>.hl-atlas-mobile-layers{flex:1;min-width:100px}}
