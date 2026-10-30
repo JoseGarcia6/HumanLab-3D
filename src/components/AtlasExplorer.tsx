@@ -199,14 +199,6 @@ export default function AtlasExplorer() {
             onClick={()=>chooseBody("female")}>Mujer</button>
         </div>
       </div>
-      {body==="female"&&<div className="hl-atlas-model-note" role="note">
-        <span>{femaleLite?
-          "Modo ligero: representación femenina esquemática con órganos educativos.":
-          "Modelo femenino detallado: estructuras de Human Reference Atlas y BodyParts3D adaptadas digitalmente. La vista limpia oculta las piezas oculares duplicadas; podés verlas en el catálogo original."}</span>
-        <button type="button" onClick={()=>switchFemaleMode(!femaleLite)}>
-          {femaleLite?"Abrir atlas femenino detallado":"Cambiar a modo ligero"}
-        </button>
-      </div>}
       <div className="hl-atlas-layout">
         <aside className={`hl-atlas-sidebar ${showLayers ? "hl-atlas-sidebar-open" : ""}`}>
           <div className="hl-atlas-sidehead">
