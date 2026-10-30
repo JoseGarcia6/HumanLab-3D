@@ -47,10 +47,10 @@ export async function GET(
         id: string; name: string; system: string;
       }) => {
         if (part.id.startsWith("BP3D_") && part.system === "skeletal") {
-          if (/\\b(fibularis|tibialis|subscapularis|levator scapulae)\\b/i.test(part.name)) {
+          if (/\b(fibularis|tibialis|subscapularis|levator scapulae)\b/i.test(part.name)) {
             return { ...part, system: "muscular" };
           }
-          if (/\\biliotibial tract\\b/i.test(part.name)) {
+          if (/\biliotibial tract\b/i.test(part.name)) {
             return { ...part, system: "connective" };
           }
         }
