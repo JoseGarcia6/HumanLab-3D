@@ -89,6 +89,26 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
   const [reviewErrors, setReviewErrors] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
+  useEffect(() => {
+    // Links from the detailed atlas open the original educational workspace.
+    const followStudyLink = () => {
+      const hash=window.location.hash;
+      if(hash==="#practicar" || hash==="#repasar-errores"){
+        setSection("practice");
+        setReviewErrors(hash==="#repasar-errores");
+      } else if(hash==="#diccionario" || hash==="#biblioteca-aprendizaje"){
+        setSection("dictionary");
+      }
+      if(["#practicar","#repasar-errores","#diccionario"].includes(hash)){
+        window.requestAnimationFrame(()=>document.getElementById("biblioteca-aprendizaje")?.scrollIntoView({block:"start"}));
+      }
+    };
+    followStudyLink();
+    window.addEventListener("hashchange", followStudyLink);
+    return ()=>window.removeEventListener("hashchange",followStudyLink);
+  }, []);
+
+
   /* eslint-disable react-hooks/set-state-in-effect -- one-time hydration of locally saved learning progress. */
   useEffect(() => {
     try {
@@ -137,14 +157,27 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
 
   function chooseAnswer(index: number) {
     if (answer !== null || !currentQuestion) return;
+    const originalIndex=questions.indexOf(currentQuestion);
     setAnswer(index);
-    setAnswered((value) => value + 1);
-    if (index === currentQuestion.answer) setScore((value) => value + 1);
+    setAnswered(value=>value+1);
+    if(index===currentQuestion.answer){
+      setScore(value=>value+1);
+    } else if(originalIndex>=0){
+      setWrongIds(previous=>previous.includes(String(originalIndex))?previous:[...previous,String(originalIndex)]);
+    }
   }
 
   function nextQuestion() {
-    if (!visibleQuestions.length) return;
-    setQuestionIndex((value) => (value + 1) % visibleQuestions.length);
+    if(!visibleQuestions.length)return;
+    const originalIndex=currentQuestion?questions.indexOf(currentQuestion):-1;
+    // Keep the current question and its feedback visible until the user advances.
+    // On a successful retry, remove it from the pending review queue.
+    if(reviewErrors && answer===currentQuestion?.answer && originalIndex>=0){
+      setWrongIds(previous=>previous.filter(id=>id!==String(originalIndex)));
+      setQuestionIndex(index=>Math.min(index,Math.max(0,visibleQuestions.length-2)));
+    } else {
+      setQuestionIndex(value=>(value+1)%visibleQuestions.length);
+    }
     setAnswer(null);
   }
 
@@ -166,7 +199,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
       </div>
 
       <div className="library-tabs" role="tablist" aria-label="Secciones de aprendizaje">
-        <button type="button" role="tab" aria-selected={section === "dictionary"} className={section === "dictionary" ? "active" : ""} onClick={() => setSection("dictionary")}>📚 Diccionario</button>
+        <button type="button" role="tab" aria-selected={section === "dictionary"} className={section === "dictionary" ? "active" : ""} onClick={() => { setSection("dictionary"); setReviewErrors(false); }}>📚 Diccionario</button>
         <button type="button" role="tab" aria-selected={section === "practice"} className={section === "practice" ? "active" : ""} onClick={() => setSection("practice")}>✦ Practicar preguntas</button>
       </div>
 
@@ -206,7 +239,7 @@ export function LearningLibrary({ onExplore }: { onExplore: (id: string) => void
             <h3>{currentQuestion.question}</h3>
             <div className="question-options">{currentQuestion.options.map((option, index) => <button type="button" key={option} disabled={answer !== null} className={answer === null ? "" : index === currentQuestion.answer ? "correct" : answer === index ? "incorrect" : ""} onClick={() => chooseAnswer(index)}>{option}</button>)}</div>
             {answer !== null && <div className={"question-feedback " + (answer === currentQuestion.answer ? "correct" : "incorrect")}><strong>{answer === currentQuestion.answer ? "¡Correcto!" : "Repasemos esta respuesta"}</strong><p>{currentQuestion.explanation}</p>{currentQuestion.exploreId && <button type="button" onClick={() => onExplore(currentQuestion.exploreId!)}>Consultar estructura en el atlas ↗</button>}</div>}
-            <div className="question-actions"><button type="button" className="entry-explore" onClick={nextQuestion}>{questionIndex % visibleQuestions.length === visibleQuestions.length - 1 ? "Volver al inicio" : "Siguiente pregunta"} →</button><span>Tu puntuación de esta sesión: {answered ? Math.round((score / answered) * 100) : 0}%</span></div>
+            <div className="question-actions"><button type="button" className="entry-explore" onClick={nextQuestion}>{questionIndex % visibleQuestions.length === visibleQuestions.length - 1 ? "Volver al inicio" : "Siguiente pregunta"} →</button><span>Tu porcentaje histórico: {answered ? Math.round((score / answered) * 100) : 0}%</span></div>
           </div>}
           <p className="library-disclaimer">Banco inicial de {questions.length} preguntas. El progreso y las respuestas por repasar se guardan en este navegador; no se envían a un servidor. La ampliación hacia 1,000 preguntas se realizará por módulos con revisión de contenido y duplicados.</p>
         </div>
