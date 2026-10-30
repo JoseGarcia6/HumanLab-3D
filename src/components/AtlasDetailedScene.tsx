@@ -1,5 +1,5 @@
 "use client";
-/* Anatomical viewer adapted from ashemag/human-atlas (MIT); geometry BodyParts3D CC BY 4.0. */
+/* Shared 3D viewer: adapted Human Atlas engine (MIT). Data: male BodyParts3D, female Female Atlas (HuBMAP/BodyParts3D CC BY 4.0). */
 import {useEffect,useRef} from 'react';
 import * as T from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
@@ -21,7 +21,17 @@ const KEY_LABELS: ReadonlyArray<readonly [string,string]> = [
  ['Diaphragm','Diafragma'],['Spleen','Bazo'],['Right main bronchus','Bronquio derecho'],
  ['Left main bronchus','Bronquio izquierdo'],['Midbrain','Mesencéfalo'],
 ];
-const TRANSLATED_NAMES=new Map(KEY_LABELS);
+const FEMALE_KEY_LABELS:ReadonlyArray<readonly [string,string]>=[
+ ['body of uterus','Útero'],['Left ovary','Ovario izquierdo'],['Right ovary','Ovario derecho'],
+ ['uterine cervix','Cuello uterino'],['vagina','Vagina'],
+ ['mammary lobe','Glándula mamaria'],['umbilical cord','Cordón umbilical'],
+ ['placenta vessels','Vasos placentarios'],
+ ['heart left ventricle','Corazón'],['Frontal bone','Hueso frontal'],
+ ['Right femur','Fémur derecho'],['Left femur','Fémur izquierdo'],
+ ['trachea','Tráquea'],['Stomach','Estómago'],['Right rectus femoris','Músculo recto femoral'],
+ ['Spleen','Bazo'],['Diaphragm','Diafragma'],
+];
+const TRANSLATED_NAMES=new Map([...KEY_LABELS,...FEMALE_KEY_LABELS]);
 const nameInSpanish=(name:string)=>TRANSLATED_NAMES.get(name)??anatomicalNameEs(name);
 interface Props {atlas:Atlas;state:SceneState;showNames:boolean;onSelect:(id:string)=>void;onProgress:(n:number)=>void;onError:(s:string)=>void}
 export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,onError}:Props){
@@ -32,9 +42,9 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
   let lastState:SceneState|null=null;
   const abort=new AbortController();
   let renderer:T.WebGLRenderer;
-  try{renderer=new T.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch{onError('This browser could not start the 3D viewer. Please try a browser with WebGL enabled.');return;}
+  try{renderer=new T.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch{onError('Tu navegador no pudo iniciar el visor 3D. Revisá que WebGL esté habilitado.');return;}
   renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<768?1.5:2));renderer.setClearColor('#f2f3f3');renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;el.appendChild(renderer.domElement);
-  renderer.domElement.setAttribute('aria-label','Interactive human anatomy. Drag to orbit, pinch or scroll to zoom, and tap a structure to inspect it.');
+  renderer.domElement.setAttribute('aria-label','Anatomía humana interactiva en 3D. Arrastrá para girar, pellizcá para acercar y tocá una estructura para ver sus datos.');
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,.005,100),controls=new OrbitControls(camera,renderer.domElement);
   camera.position.set(1.4,1.05,3.6);controls.target.set(0,.85,0);controls.enableDamping=true;controls.dampingFactor=.085;controls.minDistance=.07;controls.maxDistance=40;controls.maxPolarAngle=Math.PI*.96;controls.addEventListener('change',()=>{dirty=true;});
   const pmrem=new T.PMREMGenerator(renderer),room=new RoomEnvironment(),env=pmrem.fromScene(room,.04);scene.environment=env.texture;room.dispose();pmrem.dispose();
@@ -62,7 +72,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
   const labelLayer=document.createElement('div');labelLayer.className='hl-atlas-label-layer';labelLayer.setAttribute('aria-label','Nombres de estructuras anatómicas');el.appendChild(labelLayer);
   const partIndexByName=new Map<string,number>();
   atlas.parts.forEach((part,index)=>{if(!partIndexByName.has(part.name))partIndexByName.set(part.name,index);});
-  const featured=KEY_LABELS.flatMap(([name,title])=>{const index=partIndexByName.get(name);return index===undefined?[]:[{index,title}];});
+  const featured=(atlas.sex==='female'?FEMALE_KEY_LABELS:KEY_LABELS).flatMap(([name,title])=>{const index=partIndexByName.get(name);return index===undefined?[]:[{index,title}];});
   const labelCache=new Map<number,HTMLButtonElement>();
   const labelPoint=new T.Vector3();
   let lastNamesShown=namesRef.current;
@@ -133,10 +143,10 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
     g.setAttribute('partIndex',new T.BufferAttribute(new Float32Array(p.vertexCount).fill(i),1));
     const list=groups.get(p.system)??[];list.push(g);groups.set(p.system,list);
    });
-   groups.forEach((gs,system)=>{const geometry=mergeGeometries(gs,false);if(!geometry)throw new Error('Could not assemble anatomy geometry.');geometries.push(geometry);const mesh=new T.Mesh(geometry,mats.get(system as never));mesh.frustumCulled=false;scene.add(mesh);});
+   groups.forEach((gs,system)=>{const geometry=mergeGeometries(gs,false);if(!geometry)throw new Error('No se pudo construir la geometría anatómica.');geometries.push(geometry);const mesh=new T.Mesh(geometry,mats.get(system as never));mesh.frustumCulled=false;scene.add(mesh);});
    lastState=null;loaded++;onProgress(Math.round(loaded/atlas.chunks.length*100));dirty=true;
   };
-  (async()=>{try{let cursor=0;await Promise.all(Array.from({length:3},async()=>{while(cursor<atlas.chunks.length){const i=cursor++;await loadChunk(i);}}));if(!disposed){ready=true;dirty=true;}}catch(e){if(!disposed)onError(e instanceof Error?e.message:'Could not load the anatomy.');}})();
+  (async()=>{try{let cursor=0;await Promise.all(Array.from({length:3},async()=>{while(cursor<atlas.chunks.length){const i=cursor++;await loadChunk(i);}}));if(!disposed){ready=true;dirty=true;}}catch(e){if(!disposed)onError(e instanceof Error?e.message:'No se pudo cargar la anatomía.');}})();
   const fit=(view:string,extent=0)=>{
    const aspect=Math.max(.35,camera.aspect),mobile=el.clientWidth<768;
    const tan=Math.tan(T.MathUtils.degToRad(camera.fov/2));
@@ -199,7 +209,7 @@ export default function AnatomyScene({atlas,state,showNames,onSelect,onProgress,
    if(dirty){renderer.render(scene,camera);syncLabels(s);targets=[];if(amount>.45){const hasSolid=atlas.parts.some((p,i)=>p.system!=='integumentary'&&data[i*4+3]>.5);atlas.parts.forEach((p,i)=>{if(data[i*4+3]<.5||(hasSolid&&p.system==='integumentary'))return;let left=Infinity,right=-Infinity,top=Infinity,bottom=-Infinity;for(let corner=0;corner<8;corner++){projected.set(p.bounds[(corner&1)?1:0][0]+data[i*4],p.bounds[(corner&2)?1:0][1]+data[i*4+1],p.bounds[(corner&4)?1:0][2]+data[i*4+2]).project(camera);const x=(projected.x+1)*el.clientWidth/2,y=(1-projected.y)*el.clientHeight/2;left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}projected.copy(centers[i]).add(new T.Vector3(data[i*4],data[i*4+1],data[i*4+2])).project(camera);if(projected.z< -1||projected.z>1)return;targets.push({index:i,x:(projected.x+1)*el.clientWidth/2,y:(1-projected.y)*el.clientHeight/2,left,right,top,bottom});});}dirty=false;}
 
   };animate();
-  const contextLost=(e:Event)=>{e.preventDefault();onError('The 3D session was paused by your device. Reload to continue.');};renderer.domElement.addEventListener('webglcontextlost',contextLost);
+  const contextLost=(e:Event)=>{e.preventDefault();onError('El teléfono interrumpió la sesión 3D. Volvé a cargar el visor.');};renderer.domElement.addEventListener('webglcontextlost',contextLost);
   return()=>{disposed=true;abort.abort();cancelAnimationFrame(frame);observer.disconnect();controls.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());scene.traverse(o=>{if(o instanceof T.Mesh&&!geometries.includes(o.geometry)){o.geometry.dispose();const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>m.dispose());}});env.dispose();partTexture.dispose();selectionTexture.dispose();markerGeometry.dispose();markerMaterial.dispose();hover.remove();labelLayer.remove();labelCache.clear();renderer.dispose();renderer.domElement.remove();};
  },[atlas]);
  return <div className="hl-atlas-scene" ref={host}/>;
