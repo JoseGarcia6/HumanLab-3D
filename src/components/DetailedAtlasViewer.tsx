@@ -313,6 +313,8 @@ export default function DetailedAtlasViewer({sex,activeSystem,selectedStructure,
       <p className="unified-model-source">
         {female?"Modelo femenino adaptado de Female Atlas, HuBMAP y BodyParts3D. Algunas capas se reconstruyeron digitalmente.":"Modelo masculino BodyParts3D."}
         {" "}Uso educativo, no diagnóstico. Las simulaciones cardíacas y respiratorias se encuentran en la sección Fisiología.
+        {" "}<a href={female?"/ATTRIBUTION_FEMALE_ATLAS.md":"/ATTRIBUTION_HUMAN_ATLAS.md"} target="_blank" rel="noopener noreferrer">Créditos y atribución</a>.
+        {" "}<a href="https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html" target="_blank" rel="noopener noreferrer">Licencia anatómica CC BY 4.0</a>.
       </p>
     </div>
   );
