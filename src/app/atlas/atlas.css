@@ -136,3 +136,33 @@
  .hl-atlas-clean-toggle,.hl-atlas-fullbody{flex:1 1 calc(50% - 6px);min-width:130px}
  .hl-atlas-views{order:10}
 }
+
+
+/* HumanLab is a learning platform first: keep dictionary and lab pathways visible. */
+.hl-atlas-study-nav{max-width:1660px;margin:0 auto 16px;display:flex;flex-wrap:wrap;align-items:stretch;gap:7px}
+.hl-atlas-study-nav a{display:flex;align-items:center;justify-content:center;gap:5px;padding:11px 13px;min-height:44px;border:1px solid #35566d;border-radius:10px;background:#122b42;color:#d6e9f8;font-size:12px;font-weight:650;text-align:center;text-decoration:none;transition:background .15s,border-color .15s}
+.hl-atlas-study-nav a:hover,.hl-atlas-study-nav a:focus-visible{background:#1c4660;border-color:#72d4c8;color:#f6fffe}
+.hl-atlas-study-nav a[href="#hl-atlas-stage"]{background:#166467;border-color:#42a9a4;color:#fff}
+.hl-atlas-study-section{max-width:1660px;margin:24px auto 0;scroll-margin-top:20px}
+.hl-atlas-study-heading{padding:18px 20px;background:#102b42;border:1px solid #34546b;border-radius:14px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.hl-atlas-study-heading>div{max-width:750px}
+.hl-atlas-study-heading span{font-size:10px;color:#7be0d5;letter-spacing:.1em;font-weight:750}
+.hl-atlas-study-heading h2{font-family:inherit;font-size:clamp(18px,2.2vw,25px);margin:9px 0 6px;line-height:1.25}
+.hl-atlas-study-heading p{font-size:12px;color:#a9c5db;line-height:1.6;margin:0}
+.hl-atlas-study-heading a{display:inline-block;max-width:260px;padding:12px 16px;border:1px solid #46bbb4;border-radius:10px;background:#125e65;color:#f7fffc;font-size:12px;font-weight:650;text-align:center;text-decoration:none}
+.hl-atlas-study-heading a:hover{background:#197980}
+.hl-atlas-study-section .library-card{margin-top:13px}
+.hl-atlas-study-section .library-heading{flex-wrap:wrap}
+.hl-atlas-study-section .library-stats{min-width:150px}
+.hl-atlas-study-section .dictionary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hl-atlas-study-section :is(.dictionary-entry,.question-box,.practice-toolbar){min-width:0}
+@media(max-width:950px){.hl-atlas-study-section .dictionary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){
+ .hl-atlas-study-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .hl-atlas-study-nav a{min-height:48px;padding:9px 6px;font-size:11px}
+ .hl-atlas-study-heading{padding:14px}
+ .hl-atlas-study-heading>a{max-width:none;width:100%}
+ .hl-atlas-study-section .dictionary-grid{grid-template-columns:minmax(0,1fr)}
+ .hl-atlas-study-section .library-card{padding:13px}
+ .hl-atlas-study-section .library-stats{width:100%}
+}
